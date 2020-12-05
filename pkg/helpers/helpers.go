@@ -8,18 +8,37 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+
+	"github.com/jinzhu/copier"
 )
 
 // ContributionEntry struct for storing contributions
 type ContributionEntry struct {
-	Date string
-	Data int
+	Date string `json:"date"`
+	Data int    `json:"data"`
 }
 
 // Contributions struct for storing contributions
 type Contributions struct {
-	Total            int
-	ContributionData []ContributionEntry
+	Total            int                 `json:"total"`
+	ContributionData []ContributionEntry `json:"contributions"`
+}
+
+// AggregateContributions function aggregates contributions of all usernames
+func AggregateContributions(contributionsList []Contributions) (Contributions, error) {
+	var aggregateContributions Contributions
+
+	copier.Copy(&aggregateContributions, &contributionsList[0])
+
+	for i := 1; i < len(contributionsList); i++ {
+		aggregateContributions.Total += contributionsList[i].Total
+
+		for j, contributionEntry := range contributionsList[i].ContributionData {
+			aggregateContributions.ContributionData[j].Data += contributionEntry.Data
+		}
+	}
+
+	return aggregateContributions, nil
 }
 
 // GetRawPage function fetches the raw HTML of GitHub user's page

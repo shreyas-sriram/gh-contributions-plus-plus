@@ -28,6 +28,8 @@ func GetContributionsChart(c *gin.Context) {
 	queryParams := c.Request.URL.Query()
 	usernames := queryParams["username"]
 
+	var contributionList []helpers.Contributions
+
 	for _, username := range usernames {
 		rawHTML, err := helpers.GetRawPage(username)
 		if err != nil {
@@ -37,12 +39,16 @@ func GetContributionsChart(c *gin.Context) {
 
 		contributions, _ := helpers.ParseContributionsData(rawHTML)
 
-		b, err := json.Marshal(contributions)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		log.Println(string(b))
+		contributionList = append(contributionList, contributions)
 	}
-	c.JSON(http.StatusOK, "hello world")
+
+	aggregateContributions, _ := helpers.AggregateContributions(contributionList)
+	b, err := json.Marshal(aggregateContributions)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	log.Println(string(b))
+
+	c.JSON(http.StatusOK, string(b))
 }
