@@ -38,8 +38,7 @@ func Setup() *gin.Engine {
 	app.NoRoute(middlewares.NoRouteHandler())
 
 	// Routes
-	// ================== Tasks Routes
-	app.GET("/api/tasks/:id", controllers.GetTaskById)
+	app.GET("/api/contributions", controllers.GetContributionsChart)
 
 	return app
 }
