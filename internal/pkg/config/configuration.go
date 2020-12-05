@@ -17,7 +17,7 @@ type ServerConfiguration struct {
 	Mode string
 }
 
-// SetupDB initialize configuration
+// Setup initialize configuration
 func Setup(configPath string) {
 	var configuration *Configuration
 
