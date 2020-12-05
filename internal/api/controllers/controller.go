@@ -30,7 +30,9 @@ func GetContributionsChart(c *gin.Context) {
 	for _, username := range usernames {
 		rawHTML, err := helpers.GetRawPage(username)
 		if err != nil {
-			log.Print("Unable to reach {}'s GitHub page", username)
+			log.Print("ERROR: Unable to reach {}'s GitHub page", username)
+			c.JSON(http.StatusNotFound, err)
+			return
 		}
 
 		contributions, _ := helpers.ParseContributionsData(rawHTML)

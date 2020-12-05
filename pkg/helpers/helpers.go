@@ -33,7 +33,7 @@ func GetRawPage(username string) (string, error) {
 	defer res.Body.Close()
 
 	if res.StatusCode == 404 {
-		return "", fmt.Sprintf("user not found")
+		return "", fmt.Errorf("user not found")
 	}
 
 	body, err := ioutil.ReadAll(res.Body)
