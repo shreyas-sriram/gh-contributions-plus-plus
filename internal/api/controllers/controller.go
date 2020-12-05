@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/shreyas-sriram/gh-contributions-aggregator/pkg/helpers"
+	http_err "github.com/shreyas-sriram/gh-contributions-aggregator/pkg/http-err"
 )
 
 // GetContributionsChart godoc
@@ -30,8 +31,7 @@ func GetContributionsChart(c *gin.Context) {
 	for _, username := range usernames {
 		rawHTML, err := helpers.GetRawPage(username)
 		if err != nil {
-			log.Print("ERROR: Unable to reach {}'s GitHub page", username)
-			c.JSON(http.StatusNotFound, err)
+			http_err.NewError(c, http.StatusNotFound, err)
 			return
 		}
 
