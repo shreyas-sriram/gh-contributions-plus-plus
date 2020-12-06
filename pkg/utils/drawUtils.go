@@ -15,28 +15,31 @@ import (
 )
 
 const (
-	pixelSize       = 25
-	topBottomMargin = 60
-	leftRightMargin = 60
-	inBetween       = 5
-	blockSize       = pixelSize + inBetween
+	pixelSize    = 25
+	topMargin    = 60
+	bottomMargin = 60
+	leftMargin   = 60
+	rightMargin  = 30
+	inBetween    = 5
+	blockSize    = pixelSize + inBetween
 
 	totalX = 53
 	totalY = 7
 
-	canvasSizeWidth  = totalX*blockSize - inBetween + 2*leftRightMargin
-	canvasSizeHeight = totalY*blockSize - inBetween + 2*topBottomMargin
+	canvasSizeWidth  = totalX*blockSize - inBetween + leftMargin + rightMargin
+	canvasSizeHeight = totalY*blockSize - inBetween + topMargin + bottomMargin
 
-	monthTextStartY    = topBottomMargin / 2
-	monthTextStartX    = leftRightMargin + (pixelSize + inBetween) + ((pixelSize + inBetween) / 2)
+	monthTextStartY    = topMargin / 2
+	monthTextStartX    = int(leftMargin + 1.5*(pixelSize+inBetween))
 	monthTextInBetween = int(4.4 * (pixelSize + inBetween))
 
-	dayTextStartX    = leftRightMargin / 3
-	dayTextStartY    = int(topBottomMargin + 1.5*(pixelSize+inBetween))
+	dayTextStartX    = leftMargin / 3
+	dayTextStartY    = int(topMargin + 1.5*(pixelSize+inBetween))
 	dayTextInBetween = 2 * (pixelSize + inBetween)
 
 	legendTextStartX = canvasSizeWidth - 8*(pixelSize+inBetween)
-	legendTextStartY = canvasSizeHeight - (pixelSize + inBetween)
+	legendTextStartY = canvasSizeHeight - pixelSize - 3*inBetween
+	legendTextAdjust = 2
 )
 
 const (
@@ -56,6 +59,7 @@ const (
 
 type weekday int
 
+// Mapping weekday to index
 const (
 	Sunday weekday = iota
 	Monday
@@ -98,7 +102,7 @@ func ConstructMap(contributionList []int) {
 	myImage := image.NewRGBA(image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight))
 
 	indexColor := 0
-	locX := leftRightMargin
+	locX := leftMargin
 
 	// Painting the whole board
 	draw.Draw(myImage, image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight),
@@ -123,13 +127,13 @@ func ConstructMap(contributionList []int) {
 	// Add legend
 	x = legendTextStartX
 	y = legendTextStartY
-	addLabel(myImage, x-2*pixelSize, y+pixelSize, "Less")
+	addLabel(myImage, x-17*legendTextAdjust, y+8*legendTextAdjust, "Less")
 	for color := 2; color < 7; color++ {
 		draw.Draw(myImage, image.Rect(x, y, x+pixelSize, y+pixelSize),
 			&image.Uniform{themes["classic"][color]}, image.ZP, draw.Src)
 		x += inBetween + pixelSize
 	}
-	addLabel(myImage, x+pixelSize, y+pixelSize, "More")
+	addLabel(myImage, x+2*legendTextAdjust, y+8*legendTextAdjust, "More")
 
 	// Get starting day of the year
 	date := "01-01-2020"
@@ -145,7 +149,7 @@ func ConstructMap(contributionList []int) {
 
 	for currX := 0; currX < totalX; currX++ {
 
-		locY := topBottomMargin
+		locY := topMargin
 		for currY := 0; currY < totalY; currY++ {
 			if currY < int(t.Weekday()) && currX == 0 {
 				log.Println(currX)
