@@ -50,6 +50,7 @@ const (
 const (
 	newPngFile = "./output.png" // Output file location
 	date       = "01-01-2020"   // first date of the year
+	dateFormat = "01-02-2006"   // date format of variable "date"
 )
 
 // Mapping of description to the index
@@ -113,9 +114,10 @@ func ConstructMap(contributionList []int) error {
 
 	intensities := findIntensities(contributionList)
 
+	// Create the base image
 	myImage := image.NewRGBA(image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight))
 
-	// Painting the whole board
+	// Painting the whole image
 	draw.Draw(myImage, image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight),
 		&image.Uniform{themes["classic"][background]}, image.ZP, draw.Src)
 
@@ -143,16 +145,16 @@ func ConstructMap(contributionList []int) error {
 	// Add legend
 	x = legendTextStartX
 	y = legendTextStartY
-	addLabel(myImage, x-17*legendTextAdjust, y+8*legendTextAdjust, "Less")
+	addLabel(myImage, x-17*legendTextAdjust, y+8*legendTextAdjust, "Less") // Add "Less"
 	for color := 2; color < 7; color++ {
 		draw.Draw(myImage, image.Rect(x, y, x+pixelSize, y+pixelSize),
 			&image.Uniform{themes["classic"][color]}, image.ZP, draw.Src)
 		x += inBetween + pixelSize
 	}
-	addLabel(myImage, x+2*legendTextAdjust, y+8*legendTextAdjust, "More")
+	addLabel(myImage, x+2*legendTextAdjust, y+8*legendTextAdjust, "More") // Add "More"
 
 	// Get starting day of the year
-	t, err := time.Parse("01-02-2006", date)
+	t, err := time.Parse(dateFormat, date)
 	if err != nil {
 		return err
 	}
@@ -160,36 +162,37 @@ func ConstructMap(contributionList []int) error {
 	indexColor := level0 // Initialize intensity color to default "level0"
 	intensitiesIndex := 0
 	stop := false
-	locX := leftMargin
+	locationX := leftMargin
 
-	for currX := 0; currX < totalX; currX++ {
+	for currentX := 0; currentX < totalX; currentX++ {
 
-		locY := topMargin
-		for currY := 0; currY < totalY; currY++ {
+		locationY := topMargin
+		for currentY := 0; currentY < totalY; currentY++ {
 
 			// Skip weekdays until the starting weekday of the year
-			if currY < int(t.Weekday()) && currX == 0 {
-				locY += blockSize
+			if currentY < int(t.Weekday()) && currentX == 0 {
+				locationY += blockSize
 				continue
 			}
 			indexColor = intensities[intensitiesIndex]
 
-			draw.Draw(myImage, image.Rect(locX, locY, locX+pixelSize, locY+pixelSize),
+			draw.Draw(myImage, image.Rect(locationX, locationY, locationX+pixelSize, locationY+pixelSize),
 				&image.Uniform{themes["classic"][indexColor]}, image.ZP, draw.Src)
 
-			locY += blockSize
 			if intensitiesIndex == len(intensities)-1 {
 				stop = true
 				break
 			}
 			intensitiesIndex++
+			locationY += blockSize
 		}
-		locX += blockSize
+		locationX += blockSize
 		if stop {
 			break
 		}
 	}
 
+	// Save image to file
 	myFile, err := os.Create(newPngFile)
 	if err != nil {
 		panic(err.Error())
@@ -200,6 +203,7 @@ func ConstructMap(contributionList []int) error {
 	return nil
 }
 
+// findIntensities function calculates the intensity values for the contributions
 func findIntensities(contributions []int) []intensity {
 	max := findMax(contributions)
 	breakPoint := float32(max / 4)
@@ -224,6 +228,7 @@ func findIntensities(contributions []int) []intensity {
 	return intensities
 }
 
+// findMax function finds the maximum element in an integer-array
 func findMax(intArray []int) float32 {
 	max := intArray[0]
 	for i := 1; i < len(intArray); i++ {
@@ -234,6 +239,7 @@ func findMax(intArray []int) float32 {
 	return float32(max)
 }
 
+// addLabel function writes a given text on the image
 func addLabel(img *image.RGBA, x, y int, label string) {
 	color := themes["classic"][text]
 	point := fixed.Point26_6{X: fixed.Int26_6(x * 64), Y: fixed.Int26_6(y * 64)}
