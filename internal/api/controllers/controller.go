@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"log"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -34,9 +34,12 @@ func GetContributionsChart(c *gin.Context) {
 	}
 
 	aggregateContributions, _ := utils.AggregateContributions(contributionList)
-	log.Println(utils.ContributionList)
 
-	utils.ConstructMap(aggregateContributions)
+	err := utils.ConstructMap(aggregateContributions)
+	if err != nil {
+		http_err.NewError(c, http.StatusNotFound, fmt.Errorf("Error creating chart"))
+		return
+	}
 
 	c.JSON(http.StatusOK, "success")
 }
