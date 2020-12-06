@@ -47,10 +47,10 @@ const (
 	text
 )
 
-type contributionLevel int
+type intensity int
 
 const (
-	level0 contributionLevel = iota + 2
+	level0 intensity = iota + 2
 	level1
 	level2
 	level3
@@ -70,20 +70,21 @@ const (
 	Saturday
 )
 
+// List of "months" and "days"
 var (
 	months = []string{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"}
 	days   = []string{"Mon", "Wed", "Fri"}
 )
 
+// Theme name -> color{ [ background text level0 level1 level2 level3 level4] }
 var (
-	// Theme Name -> color{ [ background text level0 level1 level2 level3 level4] }
 	themes = make(map[string][]color.RGBA)
 )
 
 // ConstructMap function constructs and saves the contributions image
 func ConstructMap(contributionList []int) {
 
-	intensities := calculateContributionIntensity(contributionList)
+	intensities := findIntensities(contributionList)
 
 	log.Println(len(intensities))
 
@@ -101,7 +102,7 @@ func ConstructMap(contributionList []int) {
 
 	myImage := image.NewRGBA(image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight))
 
-	indexColor := 0
+	indexColor := level0
 	locX := leftMargin
 
 	// Painting the whole board
@@ -176,38 +177,33 @@ func ConstructMap(contributionList []int) {
 		}
 	}
 
-	myfile, err := os.Create(newPngFile)
+	myFile, err := os.Create(newPngFile)
 	if err != nil {
 		panic(err.Error())
 	}
-	defer myfile.Close()
-	png.Encode(myfile, myImage)
+	defer myFile.Close()
+	png.Encode(myFile, myImage)
 }
 
-func calculateContributionIntensity(contributionList []int) []int {
-	max := findMax(contributionList)
+func findIntensities(contributions []int) []intensity {
+	max := findMax(contributions)
 	breakPoint := float32(max / 4)
-	intensities := make([]int, 0)
+	intensities := make([]intensity, 0)
 
-	log.Println(len(contributionList))
-	log.Println(max)
-	log.Println(breakPoint)
-
-	for _, contribution := range contributionList {
+	for _, contribution := range contributions {
 		if contribution == 0 {
-			intensities = append(intensities, 2)
+			intensities = append(intensities, level0)
 			continue
 		}
 		contributionRange := float32(float32(contribution) / breakPoint)
-		log.Println(contribution, "-->", contributionRange)
 		if contributionRange <= 1 {
-			intensities = append(intensities, 3)
+			intensities = append(intensities, level1)
 		} else if contributionRange <= 2 {
-			intensities = append(intensities, 4)
+			intensities = append(intensities, level2)
 		} else if contributionRange <= 3 {
-			intensities = append(intensities, 5)
+			intensities = append(intensities, level3)
 		} else if contributionRange <= 4 {
-			intensities = append(intensities, 6)
+			intensities = append(intensities, level4)
 		}
 	}
 	return intensities

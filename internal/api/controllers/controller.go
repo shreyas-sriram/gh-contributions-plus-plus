@@ -17,14 +17,7 @@ import (
 // @Success 200 {object} tasks.Task
 // @Router /api/contributions [get]
 func GetContributionsChart(c *gin.Context) {
-	// if task, err := s.Get(id); err != nil {
-	// 	http_err.NewError(c, http.StatusNotFound, errors.New("task not found"))
-	// 	log.Println(err)
-	// } else {
-	// 	c.JSON(http.StatusOK, task)
-	// }
-	queryParams := c.Request.URL.Query()
-	usernames := queryParams["username"]
+	usernames := c.Request.URL.Query()["username"]
 
 	var contributionList []utils.Contributions
 
@@ -45,5 +38,5 @@ func GetContributionsChart(c *gin.Context) {
 
 	utils.ConstructMap(aggregateContributions)
 
-	c.JSON(http.StatusOK, aggregateContributions)
+	c.JSON(http.StatusOK, "success")
 }
