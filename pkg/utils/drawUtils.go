@@ -34,6 +34,9 @@ const (
 	dayTextStartX    = leftRightMargin / 3
 	dayTextStartY    = int(topBottomMargin + 1.5*(pixelSize+inBetween))
 	dayTextInBetween = 2 * (pixelSize + inBetween)
+
+	legendTextStartX = canvasSizeWidth - 8*(pixelSize+inBetween)
+	legendTextStartY = canvasSizeHeight - (pixelSize + inBetween)
 )
 
 const (
@@ -116,6 +119,17 @@ func ConstructMap(contributionList []int) {
 		addLabel(myImage, x, y, day)
 		y += dayTextInBetween
 	}
+
+	// Add legend
+	x = legendTextStartX
+	y = legendTextStartY
+	addLabel(myImage, x-2*pixelSize, y+pixelSize, "Less")
+	for color := 2; color < 7; color++ {
+		draw.Draw(myImage, image.Rect(x, y, x+pixelSize, y+pixelSize),
+			&image.Uniform{themes["classic"][color]}, image.ZP, draw.Src)
+		x += inBetween + pixelSize
+	}
+	addLabel(myImage, x+pixelSize, y+pixelSize, "More")
 
 	// Get starting day of the year
 	date := "01-01-2020"
