@@ -53,7 +53,7 @@ const (
 	dateFormat = "01-02-2006"   // date format of variable "date"
 )
 
-// Mapping of description to the index
+// Mapping of color-usage to the index
 // Used in themes
 const (
 	background = iota
