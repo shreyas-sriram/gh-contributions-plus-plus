@@ -1,14 +1,12 @@
 package controllers
 
 import (
-	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/shreyas-sriram/gh-contributions-aggregator/pkg/helpers"
 	http_err "github.com/shreyas-sriram/gh-contributions-aggregator/pkg/http-err"
+	"github.com/shreyas-sriram/gh-contributions-aggregator/pkg/utils"
 )
 
 // GetContributionsChart godoc
@@ -28,27 +26,24 @@ func GetContributionsChart(c *gin.Context) {
 	queryParams := c.Request.URL.Query()
 	usernames := queryParams["username"]
 
-	var contributionList []helpers.Contributions
+	var contributionList []utils.Contributions
 
 	for _, username := range usernames {
-		rawHTML, err := helpers.GetRawPage(username)
+		rawHTML, err := utils.GetRawPage(username)
 		if err != nil {
 			http_err.NewError(c, http.StatusNotFound, err)
 			return
 		}
 
-		contributions, _ := helpers.ParseContributionsData(rawHTML)
+		contributions, _ := utils.ParseContributionsData(rawHTML)
 
 		contributionList = append(contributionList, contributions)
 	}
 
-	aggregateContributions, _ := helpers.AggregateContributions(contributionList)
-	b, err := json.Marshal(aggregateContributions)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	log.Println(string(b))
+	aggregateContributions, _ := utils.AggregateContributions(contributionList)
+	log.Println(utils.ContributionList)
 
-	c.JSON(http.StatusOK, string(b))
+	utils.ConstructMap(aggregateContributions)
+
+	c.JSON(http.StatusOK, aggregateContributions)
 }

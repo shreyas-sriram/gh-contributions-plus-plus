@@ -25,3 +25,4 @@ bin/
 !.vscode/extensions.json
 
 **/log
+**/*.png

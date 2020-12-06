@@ -1,4 +1,4 @@
-package helpers
+package utils
 
 import (
 	"fmt"
@@ -24,8 +24,13 @@ type Contributions struct {
 	ContributionData []ContributionEntry `json:"contributions"`
 }
 
+var (
+	// ContributionList contains the contributions of the year as an integer array
+	ContributionList []int
+)
+
 // AggregateContributions function aggregates contributions of all usernames
-func AggregateContributions(contributionsList []Contributions) (Contributions, error) {
+func AggregateContributions(contributionsList []Contributions) ([]int, error) {
 	var aggregateContributions Contributions
 
 	copier.Copy(&aggregateContributions, &contributionsList[0])
@@ -38,7 +43,11 @@ func AggregateContributions(contributionsList []Contributions) (Contributions, e
 		}
 	}
 
-	return aggregateContributions, nil
+	for _, contribution := range aggregateContributions.ContributionData {
+		ContributionList = append(ContributionList, contribution.Data)
+	}
+
+	return ContributionList, nil
 }
 
 // GetRawPage function fetches the raw HTML of GitHub user's page
