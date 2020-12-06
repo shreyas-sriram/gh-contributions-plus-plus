@@ -110,9 +110,11 @@ func init() {
 }
 
 // ConstructMap function constructs and saves the contributions image
-func ConstructMap(contributionList []int) error {
+func ConstructMap(contributionList []Contributions) error {
 
-	intensities := findIntensities(contributionList)
+	aggregateContributions, _ := AggregateContributions(contributionList)
+
+	intensities := findIntensities(aggregateContributions)
 
 	// Create the base image
 	myImage := image.NewRGBA(image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight))

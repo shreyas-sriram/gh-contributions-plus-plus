@@ -33,9 +33,7 @@ func GetContributionsChart(c *gin.Context) {
 		contributionList = append(contributionList, contributions)
 	}
 
-	aggregateContributions, _ := utils.AggregateContributions(contributionList)
-
-	err := utils.ConstructMap(aggregateContributions)
+	err := utils.ConstructMap(contributionList)
 	if err != nil {
 		http_err.NewError(c, http.StatusNotFound, fmt.Errorf("Error creating chart"))
 		return
