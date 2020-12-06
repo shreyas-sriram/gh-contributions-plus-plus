@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Setup function sets-up the router
 func Setup() *gin.Engine {
 	app := gin.New()
 
@@ -34,7 +35,6 @@ func Setup() *gin.Engine {
 		)
 	}))
 	app.Use(gin.Recovery())
-	app.Use(middlewares.CORS())
 	app.NoRoute(middlewares.NoRouteHandler())
 
 	// Routes
