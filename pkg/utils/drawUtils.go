@@ -5,7 +5,6 @@ import (
 	"image/color"
 	"image/draw"
 	"image/png"
-	"log"
 	"os"
 	"time"
 
@@ -14,14 +13,17 @@ import (
 	"golang.org/x/image/math/fixed"
 )
 
+// Measurements for drawing the contribution chart
 const (
 	pixelSize    = 25
-	topMargin    = 60
+	topMargin    = 100
 	bottomMargin = 60
 	leftMargin   = 60
 	rightMargin  = 30
 	inBetween    = 5
 	blockSize    = pixelSize + inBetween
+
+	textAdjust = 20
 
 	totalX = 53
 	totalY = 7
@@ -29,7 +31,7 @@ const (
 	canvasSizeWidth  = totalX*blockSize - inBetween + leftMargin + rightMargin
 	canvasSizeHeight = totalY*blockSize - inBetween + topMargin + bottomMargin
 
-	monthTextStartY    = topMargin / 2
+	monthTextStartY    = 4 * textAdjust
 	monthTextStartX    = int(leftMargin + 1.5*(pixelSize+inBetween))
 	monthTextInBetween = int(4.4 * (pixelSize + inBetween))
 
@@ -37,18 +39,30 @@ const (
 	dayTextStartY    = int(topMargin + 1.5*(pixelSize+inBetween))
 	dayTextInBetween = 2 * (pixelSize + inBetween)
 
+	totalTextStartX = leftMargin/2 + 2*textAdjust
+	totalTextStartY = topMargin/2 - textAdjust
+
 	legendTextStartX = canvasSizeWidth - 8*(pixelSize+inBetween)
 	legendTextStartY = canvasSizeHeight - pixelSize - 3*inBetween
 	legendTextAdjust = 2
 )
 
 const (
+	newPngFile = "./output.png" // Output file location
+	date       = "01-01-2020"   // first date of the year
+)
+
+// Mapping of description to the index
+// Used in themes
+const (
 	background = iota
 	text
 )
 
+// intensity type to describe intensity of contribution
 type intensity int
 
+// Mapping of intensity names to the intensity levels
 const (
 	level0 intensity = iota + 2
 	level1
@@ -57,9 +71,10 @@ const (
 	level4
 )
 
+// weekday type to describe the day of the week
 type weekday int
 
-// Mapping weekday to index
+// Mapping of weekday to indexes
 const (
 	Sunday weekday = iota
 	Monday
@@ -76,18 +91,12 @@ var (
 	days   = []string{"Mon", "Wed", "Fri"}
 )
 
-// Theme name -> color{ [ background text level0 level1 level2 level3 level4] }
+// Mapping of theme name to the color palette values
 var (
 	themes = make(map[string][]color.RGBA)
 )
 
-// ConstructMap function constructs and saves the contributions image
-func ConstructMap(contributionList []int) {
-
-	intensities := findIntensities(contributionList)
-
-	log.Println(len(intensities))
-
+func init() {
 	themes["classic"] = []color.RGBA{
 		color.RGBA{255, 255, 255, 255},
 		color.RGBA{0, 0, 0, 255},
@@ -97,13 +106,14 @@ func ConstructMap(contributionList []int) {
 		color.RGBA{48, 161, 78, 255},
 		color.RGBA{33, 110, 57, 255},
 	}
+}
 
-	newPngFile := "./output.png"
+// ConstructMap function constructs and saves the contributions image
+func ConstructMap(contributionList []int) error {
+
+	intensities := findIntensities(contributionList)
 
 	myImage := image.NewRGBA(image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight))
-
-	indexColor := level0
-	locX := leftMargin
 
 	// Painting the whole board
 	draw.Draw(myImage, image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight),
@@ -125,6 +135,11 @@ func ConstructMap(contributionList []int) {
 		y += dayTextInBetween
 	}
 
+	// Add "total contributions" text
+	x = totalTextStartX
+	y = totalTextStartY
+	addLabel(myImage, x, y, "x contributions this year")
+
 	// Add legend
 	x = legendTextStartX
 	y = legendTextStartY
@@ -137,25 +152,23 @@ func ConstructMap(contributionList []int) {
 	addLabel(myImage, x+2*legendTextAdjust, y+8*legendTextAdjust, "More")
 
 	// Get starting day of the year
-	date := "01-01-2020"
 	t, err := time.Parse("01-02-2006", date)
 	if err != nil {
-		panic(err)
+		return err
 	}
-	log.Println(t.Weekday())
-	log.Println(int(t.Weekday()))
 
+	indexColor := level0 // Initialize intensity color to default "level0"
 	intensitiesIndex := 0
 	stop := false
+	locX := leftMargin
 
 	for currX := 0; currX < totalX; currX++ {
 
 		locY := topMargin
 		for currY := 0; currY < totalY; currY++ {
+
+			// Skip weekdays until the starting weekday of the year
 			if currY < int(t.Weekday()) && currX == 0 {
-				log.Println(currX)
-				log.Println(currY)
-				log.Println(int(t.Weekday()))
 				locY += blockSize
 				continue
 			}
@@ -183,6 +196,8 @@ func ConstructMap(contributionList []int) {
 	}
 	defer myFile.Close()
 	png.Encode(myFile, myImage)
+
+	return nil
 }
 
 func findIntensities(contributions []int) []intensity {
