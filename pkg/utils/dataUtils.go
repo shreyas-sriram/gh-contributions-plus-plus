@@ -92,6 +92,9 @@ func ParseContributionsData(rawHTML string) (Contributions, error) {
 func parseTotalContributions(rawHTML string) int {
 	r, _ := regexp.Compile("[0-9]+ contributions")
 	totalContributionsRaw := r.FindString(rawHTML)
+	if totalContributionsRaw == "" {
+		return 0
+	}
 
 	totalContributionsRaw = strings.Fields(totalContributionsRaw)[0]
 	totalContributions, _ := strconv.Atoi(totalContributionsRaw)
