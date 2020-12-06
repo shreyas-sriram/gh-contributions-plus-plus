@@ -78,7 +78,7 @@ func ParseContributionsData(rawHTML string) (Contributions, error) {
 	var contributions Contributions
 
 	contributions.Total = parseTotalContributions(rawHTML)
-	dateData, err := parseContributionDataDate(rawHTML)
+	dateData, err := parseContributionDateData(rawHTML)
 	if err != nil {
 		log.Println("Error in converting string to int")
 	}
@@ -103,24 +103,24 @@ func parseTotalContributions(rawHTML string) int {
 }
 
 // ParseContributionsData function parses the contributions date-data
-func parseContributionDataDate(rawHTML string) ([]ContributionEntry, error) {
+func parseContributionDateData(rawHTML string) ([]ContributionEntry, error) {
 	r, _ := regexp.Compile("data-count=\"[0-9]{1,3}\" data-date=\"2020-[0-9]{2}-[0-9]{2}\"")
-	allContributionsRaw := r.FindAllString(rawHTML, -1)
+	allDatesContributions := r.FindAllString(rawHTML, -1)
 
-	var contributionDataDate []ContributionEntry
+	contributionDateData := make([]ContributionEntry, 0)
 
-	for _, singleDate := range allContributionsRaw {
-		parts := strings.Split(singleDate, "\"")
+	for _, singleDateContribution := range allDatesContributions {
+		parts := strings.Split(singleDateContribution, "\"")
 
-		date := parts[3]
-		contributions, err := strconv.Atoi(parts[1])
+		contributionDate := parts[3]                    // Extracts date
+		contributionData, err := strconv.Atoi(parts[1]) // Extracts contribution for the date
 		if err != nil {
 			log.Println("Error in converting string to int")
 			return nil, err
 		}
 
-		contributionDataDate = append(contributionDataDate, ContributionEntry{date, contributions})
+		contributionDateData = append(contributionDateData, ContributionEntry{contributionDate, contributionData})
 	}
 
-	return contributionDataDate, nil
+	return contributionDateData, nil
 }

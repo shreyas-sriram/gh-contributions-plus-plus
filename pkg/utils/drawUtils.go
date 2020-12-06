@@ -48,7 +48,7 @@ const (
 )
 
 const (
-	newPngFile = "./output.png" // Output file location
+	pngFile    = "./output.png" // Output file location
 	date       = "01-01-2020"   // first date of the year
 	dateFormat = "01-02-2006"   // date format of variable "date"
 )
@@ -195,9 +195,9 @@ func ConstructMap(contributionList []Contributions) error {
 	}
 
 	// Save image to file
-	myFile, err := os.Create(newPngFile)
+	myFile, err := os.Create(pngFile)
 	if err != nil {
-		panic(err.Error())
+		return err
 	}
 	defer myFile.Close()
 	png.Encode(myFile, myImage)
