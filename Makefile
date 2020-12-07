@@ -1,5 +1,5 @@
 build:
-	go build -o bin/restapi cmd/api/main.go
+	go build -o bin/gh-contributions-aggregator cmd/api/main.go
 
 run:
 	go run cmd/api/main.go
