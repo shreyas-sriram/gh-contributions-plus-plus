@@ -24,7 +24,7 @@ func GetContributionsChart(c *gin.Context) {
 	theme := c.Request.URL.Query()["theme"]
 
 	if len(usernames) == 0 {
-		http_err.NewError(c, http.StatusNotFound, fmt.Errorf("No usernames given"))
+		http_err.NewError(c, http.StatusNotFound, fmt.Errorf("no usernames given"))
 		return
 	}
 
@@ -55,7 +55,7 @@ func GetContributionsChart(c *gin.Context) {
 
 	err := utils.ConstructMap(request)
 	if err != nil {
-		http_err.NewError(c, http.StatusNotFound, fmt.Errorf("Error creating chart"))
+		http_err.NewError(c, http.StatusNotFound, fmt.Errorf("error creating chart"))
 		return
 	}
 

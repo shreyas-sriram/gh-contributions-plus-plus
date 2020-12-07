@@ -155,7 +155,7 @@ func ConstructMap(request Request) error {
 
 	// Painting the whole image
 	draw.Draw(myImage, image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight),
-		&image.Uniform{themes[request.Theme][background]}, image.ZP, draw.Src)
+		&image.Uniform{themes[request.Theme][background]}, image.Point{}, draw.Src)
 
 	// Add month text
 	x := monthTextStartX
@@ -185,7 +185,7 @@ func ConstructMap(request Request) error {
 	addLabel(myImage, x-18*legendTextAdjust, y+8*legendTextAdjust, "Less", legendTextFontSize, request.Theme) // Add "Less"
 	for color := 2; color < 7; color++ {
 		draw.Draw(myImage, image.Rect(x, y, x+pixelSize, y+pixelSize),
-			&image.Uniform{themes[request.Theme][color]}, image.ZP, draw.Src)
+			&image.Uniform{themes[request.Theme][color]}, image.Point{}, draw.Src)
 		x += inBetween + pixelSize
 	}
 	addLabel(myImage, x+legendTextAdjust, y+8*legendTextAdjust, "More", legendTextFontSize, request.Theme) // Add "More"
@@ -215,7 +215,7 @@ func ConstructMap(request Request) error {
 			indexColor = intensities[intensitiesIndex]
 
 			draw.Draw(myImage, image.Rect(locationX, locationY, locationX+pixelSize, locationY+pixelSize),
-				&image.Uniform{themes[request.Theme][indexColor]}, image.ZP, draw.Src)
+				&image.Uniform{themes[request.Theme][indexColor]}, image.Point{}, draw.Src)
 
 			if intensitiesIndex == len(intensities)-1 {
 				stop = true

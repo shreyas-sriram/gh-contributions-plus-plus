@@ -1,7 +1,6 @@
 SRCS := $(shell find . -name '*.go')
 LINTERS := \
 	golang.org/x/lint/golint \
-	github.com/kisielk/errcheck \
 	honnef.co/go/tools/cmd/staticcheck
 APP_NAME := gh-contributions-aggregator
 
@@ -29,7 +28,7 @@ install: deps
 	go install ./...
 
 .PHONY: golint
-golint: testdeps
+golint: 
 	for file in $(SRCS); do \
 		golint $${file}; \
 		if [ -n "$$(golint $${file})" ]; then \
@@ -38,22 +37,18 @@ golint: testdeps
 	done
 
 .PHONY: vet
-vet: testdeps
+vet:
 	go vet ./...
 
-.PHONY: errcheck
-errcheck: testdeps
-	errcheck ./...
-
 .PHONY: staticcheck
-staticcheck: testdeps
+staticcheck:
 	staticcheck ./...
 
 .PHONY: lint
-lint: golint vet errcheck staticcheck
+lint: golint vet staticcheck
 
 .PHONY: test
-test: testdeps lint
+test:
 	go test -v -race ./test/...
 
 .PHONY: clean
@@ -69,9 +64,9 @@ run:
 	go run cmd/api/main.go
 
 .PHONY: docker.build
-docker.build: build
+docker.build:
 	docker build . -t $(APP_NAME) 
 
 .PHONY: docker.run
-docker.run: build-docker
+docker.run:
 	docker run -p 3000:3000 $(APP_NAME) 
