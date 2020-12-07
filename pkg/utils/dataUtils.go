@@ -24,13 +24,21 @@ type Contributions struct {
 	ContributionData []ContributionEntry `json:"contributions"`
 }
 
+// Request struct for storing contributions
+type Request struct {
+	Usernames        []string        `json:"usernames"`
+	Year             string          `json:"string"`
+	Theme            string          `json:"theme"`
+	ContributionList []Contributions `json:"contribution_list"`
+}
+
 var (
 	// ContributionList contains the contributions of the year as an integer array
 	ContributionList []int
 )
 
 // AggregateContributions function aggregates contributions of all usernames
-func AggregateContributions(contributionsList []Contributions) ([]int, error) {
+func AggregateContributions(contributionsList []Contributions) (int, []int) {
 	var aggregateContributions Contributions
 
 	copier.Copy(&aggregateContributions, &contributionsList[0])
@@ -47,13 +55,14 @@ func AggregateContributions(contributionsList []Contributions) ([]int, error) {
 		ContributionList = append(ContributionList, contribution.Data)
 	}
 
-	return ContributionList, nil
+	return aggregateContributions.Total, ContributionList
 }
 
 // GetRawPage function fetches the raw HTML of GitHub user's page
-func GetRawPage(username string) (string, error) {
+func GetRawPage(username string, year string) (string, error) {
 	// TODO support arbitrary year
-	res, err := http.Get("https://www.github.com/users/" + username + "/contributions?from=2020-01-01&to=2020-12-31")
+	url := "https://www.github.com/users/" + username + "/contributions?from=" + year + "-01-01&to=" + year + "-12-31"
+	res, err := http.Get(url)
 	if err != nil {
 		return "", err
 	}
@@ -74,11 +83,11 @@ func GetRawPage(username string) (string, error) {
 }
 
 // ParseContributionsData function parses the required contributions data
-func ParseContributionsData(rawHTML string) (Contributions, error) {
+func ParseContributionsData(rawHTML string, year string) (Contributions, error) {
 	var contributions Contributions
 
 	contributions.Total = parseTotalContributions(rawHTML)
-	dateData, err := parseContributionDateData(rawHTML)
+	dateData, err := parseContributionDateData(rawHTML, year)
 	if err != nil {
 		log.Println("Error in converting string to int")
 	}
@@ -103,8 +112,10 @@ func parseTotalContributions(rawHTML string) int {
 }
 
 // ParseContributionsData function parses the contributions date-data
-func parseContributionDateData(rawHTML string) ([]ContributionEntry, error) {
-	r, _ := regexp.Compile("data-count=\"[0-9]{1,3}\" data-date=\"2020-[0-9]{2}-[0-9]{2}\"")
+func parseContributionDateData(rawHTML string, year string) ([]ContributionEntry, error) {
+	regexString := "data-count=\"[0-9]{1,3}\" data-date=\"" + year + "-[0-9]{2}-[0-9]{2}\""
+
+	r, _ := regexp.Compile(regexString)
 	allDatesContributions := r.FindAllString(rawHTML, -1)
 
 	contributionDateData := make([]ContributionEntry, 0)

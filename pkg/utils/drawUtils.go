@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/golang/freetype"
@@ -43,7 +44,7 @@ const (
 	dayTextFontSize  = 14.0
 
 	totalTextStartX   = leftMargin/2 + 2*textAdjust
-	totalTextStartY   = topMargin/2 - textAdjust
+	totalTextStartY   = topMargin/2 - textAdjust/2
 	totalTextFontSize = 16.0
 
 	legendTextStartX   = canvasSizeWidth - 8*(pixelSize+inBetween)
@@ -57,7 +58,7 @@ const (
 
 const (
 	pngFile    = "./output.png" // Output file location
-	date       = "01-01-2020"   // first date of the year
+	firstDate  = "01-01-"       // first date of the year minus the year
 	dateFormat = "01-02-2006"   // date format of variable "date"
 )
 
@@ -133,9 +134,9 @@ func init() {
 }
 
 // ConstructMap function constructs and saves the contributions image
-func ConstructMap(contributionList []Contributions) error {
+func ConstructMap(request Request) error {
 
-	aggregateContributions, _ := AggregateContributions(contributionList)
+	total, aggregateContributions := AggregateContributions(request.ContributionList)
 
 	intensities := findIntensities(aggregateContributions)
 
@@ -144,7 +145,7 @@ func ConstructMap(contributionList []Contributions) error {
 
 	// Painting the whole image
 	draw.Draw(myImage, image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight),
-		&image.Uniform{themes["classic"][background]}, image.ZP, draw.Src)
+		&image.Uniform{themes[request.Theme][background]}, image.ZP, draw.Src)
 
 	// Add month text
 	x := monthTextStartX
@@ -165,7 +166,8 @@ func ConstructMap(contributionList []Contributions) error {
 	// Add "total contributions" text
 	x = totalTextStartX
 	y = totalTextStartY
-	addLabel(myImage, x, y, "x contributions this year", totalTextFontSize)
+	totalContributionsLabel := strconv.Itoa(total) + " contributions in " + request.Year
+	addLabel(myImage, x, y, totalContributionsLabel, totalTextFontSize)
 
 	// Add legend
 	x = legendTextStartX
@@ -179,6 +181,7 @@ func ConstructMap(contributionList []Contributions) error {
 	addLabel(myImage, x+legendTextAdjust, y+8*legendTextAdjust, "More", legendTextFontSize) // Add "More"
 
 	// Get starting day of the year
+	date := firstDate + request.Year
 	t, err := time.Parse(dateFormat, date)
 	if err != nil {
 		return err
