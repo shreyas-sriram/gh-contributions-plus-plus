@@ -5,12 +5,13 @@ import (
 	"image/color"
 	"image/draw"
 	"image/png"
+	"io/ioutil"
+	"log"
 	"os"
 	"time"
 
-	"golang.org/x/image/font"
-	"golang.org/x/image/font/basicfont"
-	"golang.org/x/image/math/fixed"
+	"github.com/golang/freetype"
+	"github.com/golang/freetype/truetype"
 )
 
 // Measurements for drawing the contribution chart
@@ -34,17 +35,24 @@ const (
 	monthTextStartY    = 4 * textAdjust
 	monthTextStartX    = int(leftMargin + 1.5*(pixelSize+inBetween))
 	monthTextInBetween = int(4.4 * (pixelSize + inBetween))
+	monthTextFontSize  = 14.0
 
 	dayTextStartX    = leftMargin / 3
 	dayTextStartY    = int(topMargin + 1.5*(pixelSize+inBetween))
 	dayTextInBetween = 2 * (pixelSize + inBetween)
+	dayTextFontSize  = 14.0
 
-	totalTextStartX = leftMargin/2 + 2*textAdjust
-	totalTextStartY = topMargin/2 - textAdjust
+	totalTextStartX   = leftMargin/2 + 2*textAdjust
+	totalTextStartY   = topMargin/2 - textAdjust
+	totalTextFontSize = 16.0
 
-	legendTextStartX = canvasSizeWidth - 8*(pixelSize+inBetween)
-	legendTextStartY = canvasSizeHeight - pixelSize - 3*inBetween
-	legendTextAdjust = 2
+	legendTextStartX   = canvasSizeWidth - 8*(pixelSize+inBetween)
+	legendTextStartY   = canvasSizeHeight - pixelSize - 3*inBetween
+	legendTextFontSize = 14.0
+	legendTextAdjust   = 2
+
+	dpi      = 72
+	fontFile = "./data/Raleway-Regular.ttf"
 )
 
 const (
@@ -95,6 +103,8 @@ var (
 // Mapping of theme name to the color palette values
 var (
 	themes = make(map[string][]color.RGBA)
+
+	font *truetype.Font
 )
 
 func init() {
@@ -106,6 +116,19 @@ func init() {
 		color.RGBA{64, 196, 99, 255},
 		color.RGBA{48, 161, 78, 255},
 		color.RGBA{33, 110, 57, 255},
+	}
+
+	// Initialize data required for drawing
+	// Read the font data
+	fontBytes, err := ioutil.ReadFile(fontFile)
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+	font, err = freetype.ParseFont(fontBytes)
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
 	}
 }
 
@@ -127,7 +150,7 @@ func ConstructMap(contributionList []Contributions) error {
 	x := monthTextStartX
 	y := monthTextStartY
 	for _, month := range months {
-		addLabel(myImage, x, y, month)
+		addLabel(myImage, x, y, month, monthTextFontSize)
 		x += monthTextInBetween
 	}
 
@@ -135,25 +158,25 @@ func ConstructMap(contributionList []Contributions) error {
 	x = dayTextStartX
 	y = dayTextStartY
 	for _, day := range days {
-		addLabel(myImage, x, y, day)
+		addLabel(myImage, x, y, day, dayTextFontSize)
 		y += dayTextInBetween
 	}
 
 	// Add "total contributions" text
 	x = totalTextStartX
 	y = totalTextStartY
-	addLabel(myImage, x, y, "x contributions this year")
+	addLabel(myImage, x, y, "x contributions this year", totalTextFontSize)
 
 	// Add legend
 	x = legendTextStartX
 	y = legendTextStartY
-	addLabel(myImage, x-17*legendTextAdjust, y+8*legendTextAdjust, "Less") // Add "Less"
+	addLabel(myImage, x-18*legendTextAdjust, y+8*legendTextAdjust, "Less", legendTextFontSize) // Add "Less"
 	for color := 2; color < 7; color++ {
 		draw.Draw(myImage, image.Rect(x, y, x+pixelSize, y+pixelSize),
 			&image.Uniform{themes["classic"][color]}, image.ZP, draw.Src)
 		x += inBetween + pixelSize
 	}
-	addLabel(myImage, x+2*legendTextAdjust, y+8*legendTextAdjust, "More") // Add "More"
+	addLabel(myImage, x+legendTextAdjust, y+8*legendTextAdjust, "More", legendTextFontSize) // Add "More"
 
 	// Get starting day of the year
 	t, err := time.Parse(dateFormat, date)
@@ -242,15 +265,15 @@ func findMax(intArray []int) float32 {
 }
 
 // addLabel function writes a given text on the image
-func addLabel(img *image.RGBA, x, y int, label string) {
-	color := themes["classic"][text]
-	point := fixed.Point26_6{X: fixed.Int26_6(x * 64), Y: fixed.Int26_6(y * 64)}
+func addLabel(img *image.RGBA, x, y int, label string, fontSize float64) {
+	c := freetype.NewContext()
+	c.SetDPI(dpi)
+	c.SetFont(font)
+	c.SetFontSize(fontSize)
+	c.SetClip(img.Bounds())
+	c.SetSrc(image.Black)
+	c.SetDst(img)
+	point := freetype.Pt(x, y)
 
-	d := &font.Drawer{
-		Dst:  img,
-		Src:  image.NewUniform(color),
-		Face: basicfont.Face7x13,
-		Dot:  point,
-	}
-	d.DrawString(label)
+	c.DrawString(label, point)
 }
