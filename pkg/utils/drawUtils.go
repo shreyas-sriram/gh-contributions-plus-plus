@@ -109,7 +109,7 @@ var (
 )
 
 func init() {
-	themes["classic"] = []color.RGBA{
+	themes["light"] = []color.RGBA{
 		color.RGBA{255, 255, 255, 255},
 		color.RGBA{0, 0, 0, 255},
 		color.RGBA{235, 237, 240, 255},
@@ -117,6 +117,16 @@ func init() {
 		color.RGBA{64, 196, 99, 255},
 		color.RGBA{48, 161, 78, 255},
 		color.RGBA{33, 110, 57, 255},
+	}
+
+	themes["dark"] = []color.RGBA{
+		color.RGBA{16, 16, 16, 255},
+		color.RGBA{255, 255, 255, 255},
+		color.RGBA{33, 33, 33, 255},
+		color.RGBA{33, 110, 57, 255},
+		color.RGBA{48, 161, 78, 255},
+		color.RGBA{64, 196, 99, 255},
+		color.RGBA{155, 233, 168, 255},
 	}
 
 	// Initialize data required for drawing
@@ -151,7 +161,7 @@ func ConstructMap(request Request) error {
 	x := monthTextStartX
 	y := monthTextStartY
 	for _, month := range months {
-		addLabel(myImage, x, y, month, monthTextFontSize)
+		addLabel(myImage, x, y, month, monthTextFontSize, request.Theme)
 		x += monthTextInBetween
 	}
 
@@ -159,7 +169,7 @@ func ConstructMap(request Request) error {
 	x = dayTextStartX
 	y = dayTextStartY
 	for _, day := range days {
-		addLabel(myImage, x, y, day, dayTextFontSize)
+		addLabel(myImage, x, y, day, dayTextFontSize, request.Theme)
 		y += dayTextInBetween
 	}
 
@@ -167,18 +177,18 @@ func ConstructMap(request Request) error {
 	x = totalTextStartX
 	y = totalTextStartY
 	totalContributionsLabel := strconv.Itoa(total) + " contributions in " + request.Year
-	addLabel(myImage, x, y, totalContributionsLabel, totalTextFontSize)
+	addLabel(myImage, x, y, totalContributionsLabel, totalTextFontSize, request.Theme)
 
 	// Add legend
 	x = legendTextStartX
 	y = legendTextStartY
-	addLabel(myImage, x-18*legendTextAdjust, y+8*legendTextAdjust, "Less", legendTextFontSize) // Add "Less"
+	addLabel(myImage, x-18*legendTextAdjust, y+8*legendTextAdjust, "Less", legendTextFontSize, request.Theme) // Add "Less"
 	for color := 2; color < 7; color++ {
 		draw.Draw(myImage, image.Rect(x, y, x+pixelSize, y+pixelSize),
-			&image.Uniform{themes["classic"][color]}, image.ZP, draw.Src)
+			&image.Uniform{themes[request.Theme][color]}, image.ZP, draw.Src)
 		x += inBetween + pixelSize
 	}
-	addLabel(myImage, x+legendTextAdjust, y+8*legendTextAdjust, "More", legendTextFontSize) // Add "More"
+	addLabel(myImage, x+legendTextAdjust, y+8*legendTextAdjust, "More", legendTextFontSize, request.Theme) // Add "More"
 
 	// Get starting day of the year
 	date := firstDate + request.Year
@@ -187,8 +197,8 @@ func ConstructMap(request Request) error {
 		return err
 	}
 
-	indexColor := level0 // Initialize intensity color to default "level0"
-	intensitiesIndex := 0
+	indexColor := level0  // Initialize intensity color to default "level0"
+	intensitiesIndex := 0 // Index variable to iterate over "intensities"
 	stop := false
 	locationX := leftMargin
 
@@ -205,7 +215,7 @@ func ConstructMap(request Request) error {
 			indexColor = intensities[intensitiesIndex]
 
 			draw.Draw(myImage, image.Rect(locationX, locationY, locationX+pixelSize, locationY+pixelSize),
-				&image.Uniform{themes["classic"][indexColor]}, image.ZP, draw.Src)
+				&image.Uniform{themes[request.Theme][indexColor]}, image.ZP, draw.Src)
 
 			if intensitiesIndex == len(intensities)-1 {
 				stop = true
@@ -268,13 +278,18 @@ func findMax(intArray []int) float32 {
 }
 
 // addLabel function writes a given text on the image
-func addLabel(img *image.RGBA, x, y int, label string, fontSize float64) {
+func addLabel(img *image.RGBA, x, y int, label string, fontSize float64, theme string) {
 	c := freetype.NewContext()
 	c.SetDPI(dpi)
 	c.SetFont(font)
 	c.SetFontSize(fontSize)
 	c.SetClip(img.Bounds())
-	c.SetSrc(image.Black)
+
+	if theme == "light" {
+		c.SetSrc(image.Black)
+	} else {
+		c.SetSrc(image.White)
+	}
 	c.SetDst(img)
 	point := freetype.Pt(x, y)
 

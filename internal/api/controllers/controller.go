@@ -33,7 +33,7 @@ func GetContributionsChart(c *gin.Context) {
 	}
 
 	if len(theme) == 0 {
-		theme[0] = "classic" // Set default as "classic"
+		theme[0] = "light" // Set default as "light"
 	}
 
 	var request utils.Request
