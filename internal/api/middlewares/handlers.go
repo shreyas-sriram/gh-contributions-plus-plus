@@ -2,16 +2,16 @@ package middlewares
 
 import "github.com/gin-gonic/gin"
 
-// NoMethodHandler
+// NoMethodHandler function handles unknown methods
 func NoMethodHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(405, gin.H{"message": "Metodo no permitido"})
+		c.JSON(405, gin.H{"message": "Method not allowed"})
 	}
 }
 
-// NoRouteHandler
+// NoRouteHandler function handles unknown routes
 func NoRouteHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(404, gin.H{"message": "The processing function of the request route was not found"})
+		c.JSON(404, gin.H{"message": "Invalid URL"})
 	}
 }

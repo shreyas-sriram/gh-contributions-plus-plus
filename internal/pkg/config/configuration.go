@@ -6,12 +6,15 @@ import (
 	"github.com/spf13/viper"
 )
 
+// Config stores the server's configuration
 var Config *Configuration
 
+// Configuration struct captures "ServerConfiguration"
 type Configuration struct {
 	Server ServerConfiguration
 }
 
+// ServerConfiguration struct captures "Port" and "Mode"
 type ServerConfiguration struct {
 	Port string
 	Mode string

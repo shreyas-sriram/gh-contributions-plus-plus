@@ -13,6 +13,7 @@ func setConfiguration(configPath string) {
 	gin.SetMode(config.GetConfig().Server.Mode)
 }
 
+// Run function starts the web server
 func Run(configPath string) {
 	if configPath == "" {
 		configPath = "data/config.yml"
