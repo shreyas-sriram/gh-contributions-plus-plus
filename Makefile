@@ -3,7 +3,7 @@ LINTERS := \
 	golang.org/x/lint/golint \
 	github.com/kisielk/errcheck \
 	honnef.co/go/tools/cmd/staticcheck
-APP := gh-contributions-aggregator
+APP_NAME := gh-contributions-aggregator
 
 
 .PHONY: deps
