@@ -24,13 +24,13 @@ RUN apk add ca-certificates
 
 WORKDIR /app
 
-COPY --from=build_base /src/out/app /app/restapi
+COPY --from=build_base /src/out/app /app/gh-contributions-aggregator
 COPY --from=build_base /src/data /app/data
 
-RUN chmod +x restapi
+RUN chmod +x gh-contributions-aggregator
 
 # This container exposes port 8080 to the outside world
 EXPOSE 3000
 
 # Run the binary program produced by `go install`
-ENTRYPOINT ./restapi
+ENTRYPOINT ./gh-contributions-aggregator
