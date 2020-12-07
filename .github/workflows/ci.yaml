@@ -17,8 +17,10 @@ jobs:
     - name: Install dependencies
       run: |
         go version
-        go get -u golang.org/x/lint/golint
-    
+        make deps
+        make testdeps
+
+
     - name: Build
       run: make build
 
