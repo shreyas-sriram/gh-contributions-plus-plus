@@ -20,7 +20,7 @@ func Run(configPath string) {
 	setConfiguration(configPath)
 	conf := config.GetConfig()
 	web := router.Setup()
-	fmt.Println("Go API REST Running on port " + conf.Server.Port)
+	fmt.Println("GitHub Contributions Aggregator is running on port " + conf.Server.Port)
 	fmt.Println("==================>")
 	_ = web.Run(":" + conf.Server.Port)
 }
