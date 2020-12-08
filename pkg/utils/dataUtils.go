@@ -89,7 +89,7 @@ func ParseContributionsData(rawHTML string, year string) (Contributions, error) 
 	contributions.Total = parseTotalContributions(rawHTML)
 	dateData, err := parseContributionDateData(rawHTML, year)
 	if err != nil {
-		log.Println("Error in converting string to int")
+		return Contributions{}, err
 	}
 
 	contributions.ContributionData = dateData
@@ -97,7 +97,7 @@ func ParseContributionsData(rawHTML string, year string) (Contributions, error) 
 	return contributions, nil
 }
 
-// ParseContributionsData function parses the total contributions
+// parseTotalContributions function parses the total contributions
 func parseTotalContributions(rawHTML string) int {
 	r, _ := regexp.Compile("[0-9]+ contributions")
 	totalContributionsRaw := r.FindString(rawHTML)
@@ -111,11 +111,11 @@ func parseTotalContributions(rawHTML string) int {
 	return totalContributions
 }
 
-// ParseContributionsData function parses the contributions date-data
+// parseContributionDateData function parses the contributions date-data
 func parseContributionDateData(rawHTML string, year string) ([]ContributionEntry, error) {
 	regexString := "data-count=\"[0-9]{1,3}\" data-date=\"" + year + "-[0-9]{2}-[0-9]{2}\""
 
-	r, _ := regexp.Compile(regexString)
+	r := regexp.MustCompile(regexString)
 	allDatesContributions := r.FindAllString(rawHTML, -1)
 
 	contributionDateData := make([]ContributionEntry, 0)

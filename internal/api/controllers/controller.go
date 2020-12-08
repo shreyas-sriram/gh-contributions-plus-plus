@@ -51,7 +51,11 @@ func GetContributionsChart(c *gin.Context) {
 			return
 		}
 
-		contributions, _ := utils.ParseContributionsData(rawHTML, request.Year)
+		contributions, err := utils.ParseContributionsData(rawHTML, request.Year)
+		if err != nil {
+			http_err.NewError(c, http.StatusNotFound, fmt.Errorf("unable to find contributions, try again later"))
+			return
+		}
 
 		request.ContributionList = append(request.ContributionList, contributions)
 	}
