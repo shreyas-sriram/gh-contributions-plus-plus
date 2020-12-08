@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"bufio"
+	"encoding/base64"
 	"image"
 	"image/color"
 	"image/draw"
@@ -142,7 +144,7 @@ func init() {
 }
 
 // ConstructMap function constructs and saves the contributions image
-func ConstructMap(request Request) error {
+func ConstructMap(request Request) (string, error) {
 
 	total, aggregateContributions := AggregateContributions(request.ContributionList)
 
@@ -152,7 +154,10 @@ func ConstructMap(request Request) error {
 	myImage := image.NewRGBA(image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight))
 
 	// Painting the whole image
+	// Draw a bigger r
 	draw.Draw(myImage, image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight),
+		&image.Uniform{themes[request.Theme][text]}, image.Point{}, draw.Src)
+	draw.Draw(myImage, image.Rect(0+2*legendTextAdjust, 0+2*legendTextAdjust, canvasSizeWidth-2*legendTextAdjust, canvasSizeHeight-2*legendTextAdjust),
 		&image.Uniform{themes[request.Theme][background]}, image.Point{}, draw.Src)
 
 	// Add month text
@@ -192,7 +197,7 @@ func ConstructMap(request Request) error {
 	date := firstDate + request.Year
 	t, err := time.Parse(dateFormat, date)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	indexColor := level0  // Initialize intensity color to default "level0"
@@ -231,12 +236,35 @@ func ConstructMap(request Request) error {
 	// Save image to file
 	myFile, err := os.Create(pngFile)
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer myFile.Close()
 	png.Encode(myFile, myImage)
 
-	return nil
+	// Serve the images
+	imgFile, err := os.Open(pngFile)
+	if err != nil {
+		return "", err
+	}
+
+	defer imgFile.Close()
+
+	// create a new buffer base on file size
+	fInfo, _ := imgFile.Stat()
+	var size int64 = fInfo.Size()
+	buf := make([]byte, size)
+
+	// read file content into buffer
+	fReader := bufio.NewReader(imgFile)
+	fReader.Read(buf)
+
+	// convert the buffer bytes to base64 string - use buf.Bytes() for new image
+	imgBase64Str := base64.StdEncoding.EncodeToString(buf)
+
+	// Embed into an html without PNG file
+	img2html := "<html><body><img src=\"data:image/png;base64," + imgBase64Str + "\" /></body></html>"
+
+	return img2html, nil
 }
 
 // findIntensities function calculates the intensity values for the contributions
