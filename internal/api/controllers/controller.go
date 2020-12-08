@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -53,16 +52,10 @@ func GetContributionsChart(c *gin.Context) {
 			return
 		}
 
-		contributions, err := data.ParseContributionsData(rawHTML, request.Year)
-		if err != nil {
-			http_err.NewError(c, http.StatusNotFound, fmt.Errorf("unable to find contributions, try again later"))
-			return
-		}
+		contributions := data.ParseContributionsData(rawHTML, request.Year)
 
 		request.ContributionList = append(request.ContributionList, contributions)
 	}
-
-	log.Println(request)
 
 	imgHTML, err := draw.ConstructMap(*request)
 	if err != nil {

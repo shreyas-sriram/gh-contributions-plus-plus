@@ -201,7 +201,7 @@ func addLabel(img *image.RGBA, x, y int, label string, fontSize float64, theme s
 // ConstructMap function constructs and saves the contributions image
 func ConstructMap(request data.Request) (string, error) {
 
-	total, contributions := data.AggregateContributions(request.ContributionList)
+	total, contributions := data.Aggregate(request.ContributionList)
 
 	intensities := findIntensities(contributions)
 

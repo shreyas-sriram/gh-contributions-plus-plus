@@ -3,7 +3,6 @@ package data
 import (
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -32,8 +31,8 @@ type Request struct {
 	ContributionList []Contributions `json:"contribution_list"`
 }
 
-// AggregateContributions function aggregates contributions of all usernames
-func AggregateContributions(contributionsList []Contributions) (int, []int) {
+// Aggregate function aggregates contributions of all usernames
+func Aggregate(contributionsList []Contributions) (int, []int) {
 	aggregateContributions := new(Contributions)
 	contributionList := make([]int, 0)
 
@@ -56,7 +55,6 @@ func AggregateContributions(contributionsList []Contributions) (int, []int) {
 
 // GetRawPage function fetches the raw HTML of GitHub user's page
 func GetRawPage(username string, year string) (string, error) {
-	// TODO support arbitrary year
 	url := "https://www.github.com/users/" + username + "/contributions?from=" + year + "-01-01&to=" + year + "-12-31"
 	res, err := http.Get(url)
 	if err != nil {
@@ -79,22 +77,19 @@ func GetRawPage(username string, year string) (string, error) {
 }
 
 // ParseContributionsData function parses the required contributions data
-func ParseContributionsData(rawHTML string, year string) (Contributions, error) {
+func ParseContributionsData(rawHTML string, year string) Contributions {
 	var contributions Contributions
 
-	contributions.Total = parseTotalContributions(rawHTML)
-	dateData, err := parseContributionDateData(rawHTML, year)
-	if err != nil {
-		return Contributions{}, err
-	}
+	contributions.Total = parseTotal(rawHTML)
+	dateData := parseDateData(rawHTML, year)
 
 	contributions.ContributionData = dateData
 
-	return contributions, nil
+	return contributions
 }
 
-// parseTotalContributions function parses the total contributions
-func parseTotalContributions(rawHTML string) int {
+// parseTotal function parses the total contributions
+func parseTotal(rawHTML string) int {
 	r, _ := regexp.Compile("[0-9]+ contributions")
 	totalContributionsRaw := r.FindString(rawHTML)
 	if totalContributionsRaw == "" {
@@ -107,8 +102,8 @@ func parseTotalContributions(rawHTML string) int {
 	return totalContributions
 }
 
-// parseContributionDateData function parses the contributions date-data
-func parseContributionDateData(rawHTML string, year string) ([]ContributionEntry, error) {
+// parseDateData function parses the contributions date-data
+func parseDateData(rawHTML string, year string) []ContributionEntry {
 	regexString := "data-count=\"[0-9]{1,3}\" data-date=\"" + year + "-[0-9]{2}-[0-9]{2}\""
 
 	r := regexp.MustCompile(regexString)
@@ -119,15 +114,10 @@ func parseContributionDateData(rawHTML string, year string) ([]ContributionEntry
 	for _, singleDateContribution := range allDatesContributions {
 		parts := strings.Split(singleDateContribution, "\"")
 
-		contributionDate := parts[3]                    // Extracts date
-		contributionData, err := strconv.Atoi(parts[1]) // Extracts contribution for the date
-		if err != nil {
-			log.Println("Error in converting string to int")
-			return nil, err
-		}
+		contributionDate := parts[3]                  // Extracts date
+		contributionData, _ := strconv.Atoi(parts[1]) // Extracts contribution for the date
 
 		contributionDateData = append(contributionDateData, ContributionEntry{contributionDate, contributionData})
 	}
-
-	return contributionDateData, nil
+	return contributionDateData
 }

@@ -49,7 +49,11 @@ lint: golint vet staticcheck
 
 .PHONY: test
 test:
-	go test -v -race ./test/...
+	go test -v -race -coverprofile=coverage.out ./...
+
+.PHONY: test.coverage
+test.coverage:
+	go tool cover -html=coverage.out
 
 .PHONY: clean
 clean:
