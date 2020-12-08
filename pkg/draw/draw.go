@@ -1,4 +1,4 @@
-package utils
+package draw
 
 import (
 	"bytes"
@@ -15,6 +15,7 @@ import (
 
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
+	"github.com/shreyas-sriram/gh-contributions-aggregator/pkg/data"
 )
 
 // Measurements for drawing the contribution chart
@@ -143,9 +144,9 @@ func init() {
 }
 
 // ConstructMap function constructs and saves the contributions image
-func ConstructMap(request Request) (string, error) {
+func ConstructMap(request data.Request) (string, error) {
 
-	total, aggregateContributions := AggregateContributions(request.ContributionList)
+	total, aggregateContributions := data.AggregateContributions(request.ContributionList)
 
 	intensities := findIntensities(aggregateContributions)
 

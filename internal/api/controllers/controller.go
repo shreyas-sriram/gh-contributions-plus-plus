@@ -7,8 +7,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/shreyas-sriram/gh-contributions-aggregator/pkg/data"
+	"github.com/shreyas-sriram/gh-contributions-aggregator/pkg/draw"
 	http_err "github.com/shreyas-sriram/gh-contributions-aggregator/pkg/http-err"
-	"github.com/shreyas-sriram/gh-contributions-aggregator/pkg/utils"
 )
 
 // GetContributionsChart godoc
@@ -39,19 +40,19 @@ func GetContributionsChart(c *gin.Context) {
 		return
 	}
 
-	var request utils.Request
+	var request data.Request
 	request.Usernames = usernames
 	request.Year = year[0]
 	request.Theme = theme[0]
 
 	for _, username := range request.Usernames {
-		rawHTML, err := utils.GetRawPage(username, request.Year)
+		rawHTML, err := data.GetRawPage(username, request.Year)
 		if err != nil {
 			http_err.NewError(c, http.StatusNotFound, err)
 			return
 		}
 
-		contributions, err := utils.ParseContributionsData(rawHTML, request.Year)
+		contributions, err := data.ParseContributionsData(rawHTML, request.Year)
 		if err != nil {
 			http_err.NewError(c, http.StatusNotFound, fmt.Errorf("unable to find contributions, try again later"))
 			return
@@ -60,7 +61,7 @@ func GetContributionsChart(c *gin.Context) {
 		request.ContributionList = append(request.ContributionList, contributions)
 	}
 
-	imgHTML, err := utils.ConstructMap(request)
+	imgHTML, err := draw.ConstructMap(request)
 	if err != nil {
 		http_err.NewError(c, http.StatusNotFound, fmt.Errorf("error creating chart"))
 		return
