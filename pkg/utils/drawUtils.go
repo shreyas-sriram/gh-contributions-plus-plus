@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"bufio"
+	"bytes"
 	"encoding/base64"
 	"image"
 	"image/color"
@@ -21,9 +21,9 @@ import (
 const (
 	pixelSize    = 25
 	topMargin    = 100
-	bottomMargin = 60
-	leftMargin   = 60
-	rightMargin  = 30
+	bottomMargin = 80
+	leftMargin   = 80
+	rightMargin  = 40
 	inBetween    = 5
 	blockSize    = pixelSize + inBetween
 
@@ -40,7 +40,7 @@ const (
 	monthTextInBetween = int(4.4 * (pixelSize + inBetween))
 	monthTextFontSize  = 14.0
 
-	dayTextStartX    = leftMargin / 3
+	dayTextStartX    = leftMargin / 2
 	dayTextStartY    = int(topMargin + 1.5*(pixelSize+inBetween))
 	dayTextInBetween = 2 * (pixelSize + inBetween)
 	dayTextFontSize  = 14.0
@@ -50,7 +50,7 @@ const (
 	totalTextFontSize = 16.0
 
 	legendTextStartX   = canvasSizeWidth - 8*(pixelSize+inBetween)
-	legendTextStartY   = canvasSizeHeight - pixelSize - 3*inBetween
+	legendTextStartY   = canvasSizeHeight - pixelSize - 5*inBetween
 	legendTextFontSize = 14.0
 	legendTextAdjust   = 2
 
@@ -153,11 +153,11 @@ func ConstructMap(request Request) (string, error) {
 	// Create the base image
 	myImage := image.NewRGBA(image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight))
 
-	// Painting the whole image
-	// Draw a bigger r
+	// Painting the background and border
+	// Draw a bigger rectangle and smaller rectangle to get a border
 	draw.Draw(myImage, image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight),
 		&image.Uniform{themes[request.Theme][text]}, image.Point{}, draw.Src)
-	draw.Draw(myImage, image.Rect(0+2*legendTextAdjust, 0+2*legendTextAdjust, canvasSizeWidth-2*legendTextAdjust, canvasSizeHeight-2*legendTextAdjust),
+	draw.Draw(myImage, image.Rect(0+legendTextAdjust, 0+legendTextAdjust, canvasSizeWidth-legendTextAdjust, canvasSizeHeight-legendTextAdjust),
 		&image.Uniform{themes[request.Theme][background]}, image.Point{}, draw.Src)
 
 	// Add month text
@@ -205,6 +205,7 @@ func ConstructMap(request Request) (string, error) {
 	stop := false
 	locationX := leftMargin
 
+	// Paint the contributions
 	for currentX := 0; currentX < totalX; currentX++ {
 
 		locationY := topMargin
@@ -233,38 +234,18 @@ func ConstructMap(request Request) (string, error) {
 		}
 	}
 
-	// Save image to file
-	myFile, err := os.Create(pngFile)
-	if err != nil {
-		return "", err
-	}
-	defer myFile.Close()
-	png.Encode(myFile, myImage)
+	// Encode image to buffer
+	buff := new(bytes.Buffer)
+	err = png.Encode(buff, myImage)
+	buf := buff.Bytes()
 
-	// Serve the images
-	imgFile, err := os.Open(pngFile)
-	if err != nil {
-		return "", err
-	}
-
-	defer imgFile.Close()
-
-	// create a new buffer base on file size
-	fInfo, _ := imgFile.Stat()
-	var size int64 = fInfo.Size()
-	buf := make([]byte, size)
-
-	// read file content into buffer
-	fReader := bufio.NewReader(imgFile)
-	fReader.Read(buf)
-
-	// convert the buffer bytes to base64 string - use buf.Bytes() for new image
-	imgBase64Str := base64.StdEncoding.EncodeToString(buf)
+	// Convert image bytes to Base64
+	imgBase64String := base64.StdEncoding.EncodeToString(buf)
 
 	// Embed into an html without PNG file
-	img2html := "<html><body><img src=\"data:image/png;base64," + imgBase64Str + "\" /></body></html>"
+	imgHTML := "<html><body><img src=\"data:image/png;base64," + imgBase64String + "\" /></body></html>"
 
-	return img2html, nil
+	return imgHTML, nil
 }
 
 // findIntensities function calculates the intensity values for the contributions
