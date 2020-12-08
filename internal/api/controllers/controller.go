@@ -25,7 +25,7 @@ func GetContributionsChart(c *gin.Context) {
 	theme := c.Request.URL.Query()["theme"]
 
 	if len(usernames) == 0 {
-		http_err.NewError(c, http.StatusNotFound, fmt.Errorf("no usernames given"))
+		http_err.NewError(c, http.StatusBadRequest, fmt.Errorf("no usernames given"))
 		return
 	}
 
@@ -36,7 +36,7 @@ func GetContributionsChart(c *gin.Context) {
 	if len(theme) == 0 {
 		theme[0] = "light" // Set default as "light"
 	} else if !(theme[0] == "light" || theme[0] == "dark") {
-		http_err.NewError(c, http.StatusNotFound, fmt.Errorf("theme must be \"light\" or \"dark\""))
+		http_err.NewError(c, http.StatusBadRequest, fmt.Errorf("theme must be \"light\" or \"dark\""))
 		return
 	}
 
@@ -48,7 +48,7 @@ func GetContributionsChart(c *gin.Context) {
 	for _, username := range request.Usernames {
 		rawHTML, err := data.GetRawPage(username, request.Year)
 		if err != nil {
-			http_err.NewError(c, http.StatusNotFound, err)
+			http_err.NewError(c, http.StatusNotFound, fmt.Errorf("user not found"))
 			return
 		}
 
@@ -63,7 +63,7 @@ func GetContributionsChart(c *gin.Context) {
 
 	imgHTML, err := draw.ConstructMap(request)
 	if err != nil {
-		http_err.NewError(c, http.StatusNotFound, fmt.Errorf("error creating chart"))
+		http_err.NewError(c, http.StatusInternalServerError, fmt.Errorf("error creating chart"))
 		return
 	}
 
