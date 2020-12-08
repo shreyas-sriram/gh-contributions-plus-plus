@@ -293,7 +293,7 @@ func ConstructMap(request data.Request) (string, error) {
 
 	// Encode image to buffer
 	buff := new(bytes.Buffer)
-	err = png.Encode(buff, myImage)
+	_ = png.Encode(buff, myImage)
 	buf := buff.Bytes()
 
 	// Convert image bytes to Base64
