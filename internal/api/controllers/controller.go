@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -40,7 +41,7 @@ func GetContributionsChart(c *gin.Context) {
 		return
 	}
 
-	var request data.Request
+	request := new(data.Request)
 	request.Usernames = usernames
 	request.Year = year[0]
 	request.Theme = theme[0]
@@ -61,11 +62,15 @@ func GetContributionsChart(c *gin.Context) {
 		request.ContributionList = append(request.ContributionList, contributions)
 	}
 
-	imgHTML, err := draw.ConstructMap(request)
+	log.Println(request)
+
+	imgHTML, err := draw.ConstructMap(*request)
 	if err != nil {
 		http_err.NewError(c, http.StatusInternalServerError, fmt.Errorf("error creating chart"))
 		return
 	}
+
+	request = nil
 
 	c.Data(http.StatusOK, "text/html; charset=utf-8", []byte(imgHTML))
 }

@@ -32,14 +32,10 @@ type Request struct {
 	ContributionList []Contributions `json:"contribution_list"`
 }
 
-var (
-	// ContributionList contains the contributions of the year as an integer array
-	ContributionList []int
-)
-
 // AggregateContributions function aggregates contributions of all usernames
 func AggregateContributions(contributionsList []Contributions) (int, []int) {
-	var aggregateContributions Contributions
+	aggregateContributions := new(Contributions)
+	contributionList := make([]int, 0)
 
 	copier.Copy(&aggregateContributions, &contributionsList[0])
 
@@ -52,10 +48,10 @@ func AggregateContributions(contributionsList []Contributions) (int, []int) {
 	}
 
 	for _, contribution := range aggregateContributions.ContributionData {
-		ContributionList = append(ContributionList, contribution.Data)
+		contributionList = append(contributionList, contribution.Data)
 	}
 
-	return aggregateContributions.Total, ContributionList
+	return aggregateContributions.Total, contributionList
 }
 
 // GetRawPage function fetches the raw HTML of GitHub user's page

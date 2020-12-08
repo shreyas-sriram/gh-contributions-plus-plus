@@ -149,9 +149,14 @@ func ConstructMap(request data.Request) (string, error) {
 	total, aggregateContributions := data.AggregateContributions(request.ContributionList)
 
 	intensities := findIntensities(aggregateContributions)
+	log.Println(total)
+	log.Println(aggregateContributions)
+	log.Println(len(intensities))
 
 	// Create the base image
 	myImage := image.NewRGBA(image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight))
+
+	draw.Draw(myImage, myImage.Bounds(), image.Transparent, image.Point{}, draw.Src)
 
 	// Painting the background and border
 	// Draw a bigger rectangle and smaller rectangle to get a border
