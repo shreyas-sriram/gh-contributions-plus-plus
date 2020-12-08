@@ -143,15 +143,67 @@ func init() {
 	}
 }
 
+// findIntensities function calculates the intensity values for the contributions
+func findIntensities(contributions []int) []intensity {
+	max := findMax(contributions)
+	breakPoint := float32(max / 4)
+	intensities := make([]intensity, 0)
+
+	for _, contribution := range contributions {
+		if contribution == 0 {
+			intensities = append(intensities, level0)
+			continue
+		}
+		contributionRange := float32(float32(contribution) / breakPoint)
+		if contributionRange <= 1 {
+			intensities = append(intensities, level1)
+		} else if contributionRange <= 2 {
+			intensities = append(intensities, level2)
+		} else if contributionRange <= 3 {
+			intensities = append(intensities, level3)
+		} else if contributionRange <= 4 {
+			intensities = append(intensities, level4)
+		}
+	}
+	return intensities
+}
+
+// findMax function finds the maximum element in an integer-array
+func findMax(intArray []int) float32 {
+	max := intArray[0]
+	for i := 1; i < len(intArray); i++ {
+		if intArray[i] > max {
+			max = intArray[i]
+		}
+	}
+	return float32(max)
+}
+
+// addLabel function writes a given text on the image
+func addLabel(img *image.RGBA, x, y int, label string, fontSize float64, theme string) {
+	c := freetype.NewContext()
+	c.SetDPI(dpi)
+	c.SetFont(font)
+	c.SetFontSize(fontSize)
+	c.SetClip(img.Bounds())
+
+	if theme == "light" {
+		c.SetSrc(image.Black)
+	} else {
+		c.SetSrc(image.White)
+	}
+	c.SetDst(img)
+	point := freetype.Pt(x, y)
+
+	c.DrawString(label, point)
+}
+
 // ConstructMap function constructs and saves the contributions image
 func ConstructMap(request data.Request) (string, error) {
 
-	total, aggregateContributions := data.AggregateContributions(request.ContributionList)
+	total, contributions := data.AggregateContributions(request.ContributionList)
 
-	intensities := findIntensities(aggregateContributions)
-	log.Println(total)
-	log.Println(aggregateContributions)
-	log.Println(len(intensities))
+	intensities := findIntensities(contributions)
 
 	// Create the base image
 	myImage := image.NewRGBA(image.Rect(0, 0, canvasSizeWidth, canvasSizeHeight))
@@ -251,59 +303,4 @@ func ConstructMap(request data.Request) (string, error) {
 	imgHTML := "<html><body><img src=\"data:image/png;base64," + imgBase64String + "\" /></body></html>"
 
 	return imgHTML, nil
-}
-
-// findIntensities function calculates the intensity values for the contributions
-func findIntensities(contributions []int) []intensity {
-	max := findMax(contributions)
-	breakPoint := float32(max / 4)
-	intensities := make([]intensity, 0)
-
-	for _, contribution := range contributions {
-		if contribution == 0 {
-			intensities = append(intensities, level0)
-			continue
-		}
-		contributionRange := float32(float32(contribution) / breakPoint)
-		if contributionRange <= 1 {
-			intensities = append(intensities, level1)
-		} else if contributionRange <= 2 {
-			intensities = append(intensities, level2)
-		} else if contributionRange <= 3 {
-			intensities = append(intensities, level3)
-		} else if contributionRange <= 4 {
-			intensities = append(intensities, level4)
-		}
-	}
-	return intensities
-}
-
-// findMax function finds the maximum element in an integer-array
-func findMax(intArray []int) float32 {
-	max := intArray[0]
-	for i := 1; i < len(intArray); i++ {
-		if intArray[i] > max {
-			max = intArray[i]
-		}
-	}
-	return float32(max)
-}
-
-// addLabel function writes a given text on the image
-func addLabel(img *image.RGBA, x, y int, label string, fontSize float64, theme string) {
-	c := freetype.NewContext()
-	c.SetDPI(dpi)
-	c.SetFont(font)
-	c.SetFontSize(fontSize)
-	c.SetClip(img.Bounds())
-
-	if theme == "light" {
-		c.SetSrc(image.Black)
-	} else {
-		c.SetSrc(image.White)
-	}
-	c.SetDst(img)
-	point := freetype.Pt(x, y)
-
-	c.DrawString(label, point)
 }
