@@ -34,6 +34,9 @@ func GetContributionsChart(c *gin.Context) {
 
 	if len(theme) == 0 {
 		theme[0] = "light" // Set default as "light"
+	} else if !(theme[0] == "light" || theme[0] == "dark") {
+		http_err.NewError(c, http.StatusNotFound, fmt.Errorf("theme must be \"light\" or \"dark\""))
+		return
 	}
 
 	var request utils.Request

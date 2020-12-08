@@ -54,9 +54,7 @@ const (
 
 	dpi      = 72
 	fontFile = "./data/Raleway-Regular.ttf"
-)
 
-const (
 	pngFile    = "./output.png" // Output file location
 	firstDate  = "01-01-"       // first date of the year minus the year
 	dateFormat = "01-02-2006"   // date format of variable "date"
