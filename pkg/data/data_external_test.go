@@ -84,3 +84,43 @@ func TestGetRawPage(t *testing.T) {
 		}
 	}
 }
+
+func TestAggregate(t *testing.T) {
+	type want struct {
+		total         int
+		contributions []int
+	}
+
+	c1 := data.Contributions{15, []data.ContributionEntry{data.ContributionEntry{"2020-11-22", 5}, data.ContributionEntry{"2020-10-20", 10}}}
+	c2 := data.Contributions{10, []data.ContributionEntry{data.ContributionEntry{"2020-11-22", 7}, data.ContributionEntry{"2020-10-20", 3}}}
+	c3 := data.Contributions{5, []data.ContributionEntry{data.ContributionEntry{"2020-11-22", 2}, data.ContributionEntry{"2020-10-20", 3}}}
+
+	tests := []struct {
+		name string
+		args []data.Contributions
+		want want
+	}{
+		{
+			name: "simple data",
+			args: []data.Contributions{c1},
+			want: want{15, []int{5, 10}},
+		},
+		{
+			name: "complex data",
+			args: []data.Contributions{c1, c2, c3},
+			want: want{30, []int{14, 16}},
+		},
+	}
+
+	for _, test := range tests {
+		gotTotal, gotContributions := data.Aggregate(test.args)
+		if gotTotal != test.want.total {
+			t.Errorf("Got and want were incorrect, got: %+vs, want: %+v", gotTotal, test.want.total)
+		}
+		for i, gotContribution := range gotContributions {
+			if gotContribution != test.want.contributions[i] {
+				t.Errorf("Got and want were incorrect, got: %+vs, want: %+v", gotContribution, test.want.contributions[i])
+			}
+		}
+	}
+}
