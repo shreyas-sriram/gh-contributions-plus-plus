@@ -55,8 +55,9 @@ const (
 	legendTextFontSize = 14.0
 	legendTextAdjust   = 2
 
-	dpi      = 72
-	fontFile = "./data/Raleway-Regular.ttf"
+	dpi          = 72
+	fontFileProd = "./data/Raleway-Regular.ttf"
+	fontFileTest = "../../data/Raleway-Regular.ttf"
 
 	firstDate  = "01-01-"     // first date of the year minus the year
 	dateFormat = "01-02-2006" // date format of variable "date"
@@ -131,6 +132,13 @@ func init() {
 
 	// Initialize data required for drawing
 	// Read the font data
+	var fontFile string
+	if env := os.Getenv("ENV"); env == "test" {
+		fontFile = fontFileTest
+	} else {
+		fontFile = fontFileProd
+	}
+
 	fontBytes, err := ioutil.ReadFile(fontFile)
 	if err != nil {
 		log.Println(err)
