@@ -2,52 +2,34 @@ package data_test
 
 import (
 	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/shreyas-sriram/gh-contributions-aggregator/pkg/data"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestParseDateData(t *testing.T) {
-	type contribution struct {
-		date string
-		data int
-	}
-
-	type want struct {
-		total int
-		data  []contribution
-	}
-
 	type args struct {
 		rawHTML string
 		year    string
 	}
 
+	emptyContributionDateData := make([]data.ContributionEntry, 0)
+	var emptyInt int
+
 	tests := []struct {
 		name string
 		args args
-		want want
+		want data.Contributions
 	}{
-		{name: "simple match", args: args{"10 contributions this year blah blah blah data-count=\"10\" data-date=\"2020-11-22\"", "2020"}, want: want{10, []contribution{contribution{"2020-11-22", 10}}}},
-		{name: "multiple match", args: args{"14 contributions this year blah blah blah data-count=\"6\" data-date=\"2020-11-22\"\ndata-count=\"8\" data-date=\"2020-11-23\"", "2020"}, want: want{14, []contribution{contribution{"2020-11-22", 6}, contribution{"2020-11-23", 8}}}},
-		{name: "no match", args: args{"blah blah blah", "2020"}, want: want{}},
+		{name: "simple match", args: args{"10 contributions this year blah blah blah data-count=\"10\" data-date=\"2020-11-22\"", "2020"}, want: data.Contributions{10, []data.ContributionEntry{data.ContributionEntry{"2020-11-22", 10}}}},
+		{name: "multiple match", args: args{"14 contributions this year blah blah blah data-count=\"6\" data-date=\"2020-11-22\"\ndata-count=\"8\" data-date=\"2020-11-23\"", "2020"}, want: data.Contributions{14, []data.ContributionEntry{data.ContributionEntry{"2020-11-22", 6}, data.ContributionEntry{"2020-11-23", 8}}}},
+		{name: "no match", args: args{"blah blah blah", "2020"}, want: data.Contributions{emptyInt, emptyContributionDateData}},
 	}
 
 	for _, test := range tests {
 		got := data.ParseContributionsData(test.args.rawHTML, test.args.year)
-		if got.Total != test.want.total {
-			t.Errorf("Got and want were incorrect, got: %+v, want: %+v", got.Total, test.want.total)
-		}
-
-		for i, gotData := range got.ContributionData {
-			if gotData.Date != test.want.data[i].date {
-				t.Errorf("Got and want were incorrect, got: %+v, want: %+v", gotData.Date, test.want.data[i].date)
-			}
-			if gotData.Data != test.want.data[i].data {
-				t.Errorf("Got and want were incorrect, got: %+v, want: %+v", gotData.Data, test.want.data[i].data)
-			}
-		}
+		assert.Equal(t, got, test.want, "got: %+v, want %+v", got, test.want)
 	}
 }
 
@@ -74,14 +56,9 @@ func TestGetRawPage(t *testing.T) {
 	for _, test := range tests {
 		got, err := data.GetRawPage(test.args.username, test.args.year)
 		if err != nil {
-			if got != test.want.rawHTML {
-				t.Errorf("Got and want were incorrect, got: %+v, want: %+v", got, test.want.rawHTML)
-			}
+			assert.Equal(t, got, test.want.rawHTML, "got: %+v, want %+v", got, test.want.rawHTML)
 		}
-		res := strings.Contains(got, test.want.rawHTML)
-		if !res {
-			t.Errorf("Got and want were incorrect, got: %+v, want: %+v", got, test.want.rawHTML)
-		}
+		assert.Contains(t, got, test.want.rawHTML)
 	}
 }
 
@@ -114,13 +91,7 @@ func TestAggregate(t *testing.T) {
 
 	for _, test := range tests {
 		gotTotal, gotContributions := data.Aggregate(test.args)
-		if gotTotal != test.want.total {
-			t.Errorf("Got and want were incorrect, got: %+v, want: %+v", gotTotal, test.want.total)
-		}
-		for i, gotContribution := range gotContributions {
-			if gotContribution != test.want.contributions[i] {
-				t.Errorf("Got and want were incorrect, got: %+v, want: %+v", gotContribution, test.want.contributions[i])
-			}
-		}
+		assert.Equal(t, gotTotal, test.want.total, "got: %+v, want %+v", gotTotal, test.want.total)
+		assert.Equal(t, gotContributions, test.want.contributions, "got: %+v, want %+v", gotContributions, test.want.contributions)
 	}
 }

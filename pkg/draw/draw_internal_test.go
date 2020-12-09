@@ -2,6 +2,8 @@ package draw
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestFindMax(t *testing.T) {
@@ -16,9 +18,7 @@ func TestFindMax(t *testing.T) {
 
 	for _, test := range tests {
 		got := findMax(test.args)
-		if got != test.want {
-			t.Errorf("Got and want were incorrect, got: %+v, want: %+v", got, test.want)
-		}
+		assert.Equal(t, got, test.want, "got: %+v, want %+v", got, test.want)
 	}
 }
 
@@ -35,10 +35,6 @@ func TestFindIntensities(t *testing.T) {
 
 	for _, test := range tests {
 		got := findIntensities(test.args)
-		for i := range test.want {
-			if got[i] != test.want[i] {
-				t.Errorf("Got and want were incorrect, got: %+v, want: %+v", got[i], test.want[i])
-			}
-		}
+		assert.Equal(t, got, test.want, "got: %+v, want %+v", got, test.want)
 	}
 }

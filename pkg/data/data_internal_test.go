@@ -2,14 +2,11 @@ package data
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestParseDateData(t *testing.T) {
-	type data struct {
-		date string
-		data int
-	}
-
 	type input struct {
 		rawHTML string
 		year    string
@@ -18,20 +15,16 @@ func TestParseDateData(t *testing.T) {
 	tests := []struct {
 		name string
 		args input
-		want []data
+		want []ContributionEntry
 	}{
-		{name: "simple match", args: input{"data-count=\"10\" data-date=\"2020-11-22\"", "2020"}, want: []data{data{"2020-11-22", 10}}},
-		{name: "match html string", args: input{"<foobar>data-count=\"10\" data-date=\"2020-11-22\"</foobar>", "2020"}, want: []data{data{"2020-11-22", 10}}},
-		{name: "no matches", args: input{"<foobar></foobar>", "2020"}, want: []data{}},
+		{name: "simple match", args: input{"data-count=\"10\" data-date=\"2020-11-22\"", "2020"}, want: []ContributionEntry{ContributionEntry{"2020-11-22", 10}}},
+		{name: "match html string", args: input{"<foobar>data-count=\"10\" data-date=\"2020-11-22\"</foobar>", "2020"}, want: []ContributionEntry{ContributionEntry{"2020-11-22", 10}}},
+		{name: "no matches", args: input{"<foobar></foobar>", "2020"}, want: []ContributionEntry{}},
 	}
 
 	for _, test := range tests {
 		got := parseDateData(test.args.rawHTML, test.args.year)
-		for i, gotData := range got {
-			if gotData.Date != test.want[i].date || gotData.Data != test.want[i].data {
-				t.Errorf("Got and want were incorrect, got: %+v, want: %+v", gotData, test.want[i])
-			}
-		}
+		assert.Equal(t, got, test.want, "got: %+v, want %+v", got, test.want)
 	}
 }
 
@@ -48,8 +41,6 @@ func TestParseTotal(t *testing.T) {
 
 	for _, test := range tests {
 		got := parseTotal(test.args)
-		if got != test.want {
-			t.Errorf("Got and want were incorrect, got: %d, want: %d", got, test.want)
-		}
+		assert.Equal(t, got, test.want, "got: %+v, want %+v", got, test.want)
 	}
 }
