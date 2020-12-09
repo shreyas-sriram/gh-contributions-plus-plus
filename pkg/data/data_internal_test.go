@@ -29,7 +29,7 @@ func TestParseDateData(t *testing.T) {
 		got := parseDateData(test.args.rawHTML, test.args.year)
 		for i, gotData := range got {
 			if gotData.Date != test.want[i].date || gotData.Data != test.want[i].data {
-				t.Errorf("Got and want were incorrect, got: %+vs, want: %+v", gotData, test.want[i])
+				t.Errorf("Got and want were incorrect, got: %+v, want: %+v", gotData, test.want[i])
 			}
 		}
 	}

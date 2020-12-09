@@ -37,15 +37,15 @@ func TestParseDateData(t *testing.T) {
 	for _, test := range tests {
 		got := data.ParseContributionsData(test.args.rawHTML, test.args.year)
 		if got.Total != test.want.total {
-			t.Errorf("Got and want were incorrect, got: %+vs, want: %+v", got.Total, test.want.total)
+			t.Errorf("Got and want were incorrect, got: %+v, want: %+v", got.Total, test.want.total)
 		}
 
 		for i, gotData := range got.ContributionData {
 			if gotData.Date != test.want.data[i].date {
-				t.Errorf("Got and want were incorrect, got: %+vs, want: %+v", gotData.Date, test.want.data[i].date)
+				t.Errorf("Got and want were incorrect, got: %+v, want: %+v", gotData.Date, test.want.data[i].date)
 			}
 			if gotData.Data != test.want.data[i].data {
-				t.Errorf("Got and want were incorrect, got: %+vs, want: %+v", gotData.Data, test.want.data[i].data)
+				t.Errorf("Got and want were incorrect, got: %+v, want: %+v", gotData.Data, test.want.data[i].data)
 			}
 		}
 	}
@@ -75,12 +75,12 @@ func TestGetRawPage(t *testing.T) {
 		got, err := data.GetRawPage(test.args.username, test.args.year)
 		if err != nil {
 			if got != test.want.rawHTML {
-				t.Errorf("Got and want were incorrect, got: %+vs, want: %+v", got, test.want.rawHTML)
+				t.Errorf("Got and want were incorrect, got: %+v, want: %+v", got, test.want.rawHTML)
 			}
 		}
 		res := strings.Contains(got, test.want.rawHTML)
 		if !res {
-			t.Errorf("Got and want were incorrect, got: %+vs, want: %+v", got, test.want.rawHTML)
+			t.Errorf("Got and want were incorrect, got: %+v, want: %+v", got, test.want.rawHTML)
 		}
 	}
 }
@@ -115,11 +115,11 @@ func TestAggregate(t *testing.T) {
 	for _, test := range tests {
 		gotTotal, gotContributions := data.Aggregate(test.args)
 		if gotTotal != test.want.total {
-			t.Errorf("Got and want were incorrect, got: %+vs, want: %+v", gotTotal, test.want.total)
+			t.Errorf("Got and want were incorrect, got: %+v, want: %+v", gotTotal, test.want.total)
 		}
 		for i, gotContribution := range gotContributions {
 			if gotContribution != test.want.contributions[i] {
-				t.Errorf("Got and want were incorrect, got: %+vs, want: %+v", gotContribution, test.want.contributions[i])
+				t.Errorf("Got and want were incorrect, got: %+v, want: %+v", gotContribution, test.want.contributions[i])
 			}
 		}
 	}
