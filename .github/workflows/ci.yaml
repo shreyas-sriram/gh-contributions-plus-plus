@@ -22,7 +22,7 @@ jobs:
 
 
     - name: Build
-      run: make build
+      run: make build.linux
 
     - name: Test
       run: make test
