@@ -90,13 +90,14 @@ func ParseContributionsData(rawHTML string, year string) Contributions {
 
 // parseTotal function parses the total contributions
 func parseTotal(rawHTML string) int {
-	r, _ := regexp.Compile("[0-9]+ contributions")
+	r, _ := regexp.Compile("[0-9,]+ contributions")
 	totalContributionsRaw := r.FindString(rawHTML)
 	if totalContributionsRaw == "" {
 		return 0
 	}
 
 	totalContributionsRaw = strings.Fields(totalContributionsRaw)[0]
+	totalContributionsRaw = strings.ReplaceAll(totalContributionsRaw, ",", "")
 	totalContributions, _ := strconv.Atoi(totalContributionsRaw)
 
 	return totalContributions
