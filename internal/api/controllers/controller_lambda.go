@@ -26,7 +26,7 @@ func GetContributionsChartLambda(gatewayRequest events.APIGatewayProxyRequest) (
 	theme := gatewayRequest.QueryStringParameters["theme"]
 
 	if len(usernames) == 0 {
-		return Response{Body: "no usernames given", StatusCode: http.StatusOK}, nil
+		return Response{Body: "usage: <IP>/aggregate?username=<username1>&username=<username2>&year=<year>&theme=<light/dark>", StatusCode: http.StatusOK}, nil
 	}
 
 	if len(year) == 0 {
