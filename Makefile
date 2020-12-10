@@ -59,9 +59,24 @@ test.coverage:
 clean:
 	go clean -i ./...
 
-.PHONY: build
-build:
-	go build -o bin/$(APP_NAME) cmd/api/main.go
+.PHONY: build.linux
+build.linux:
+	env GOOS=linux go build -ldflags="-s -w" -o bin/$(APP_NAME) cmd/api/main.go
+
+.PHONY: build.mac
+build.mac:
+	env GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o bin/$(APP_NAME) cmd/api/main.go
+
+.PHONY: deploy.sls
+deploy.sls:
+	sls deploy -v
+
+.PHONY: sls
+sls: build.linux deploy.sls
+
+.PHONY: start
+start:
+	DEPLOY=server ./bin/$(APP_NAME)
 
 .PHONY: run
 run:

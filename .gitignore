@@ -27,3 +27,4 @@ bin/
 **/log
 **/*.png
 **/.DS_Store
+.serverless

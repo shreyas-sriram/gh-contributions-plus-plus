@@ -25,16 +25,16 @@ func GetContributionsChart(c *gin.Context) {
 	theme := c.Request.URL.Query()["theme"]
 
 	if len(usernames) == 0 {
-		http_err.NewError(c, http.StatusBadRequest, fmt.Errorf("no usernames given"))
+		http_err.NewError(c, http.StatusBadRequest, fmt.Errorf("usage: <IP>/aggregate?username=<username1>&username=<username2>&year=<year>&theme=<light/dark>"))
 		return
 	}
 
 	if len(year) == 0 {
-		year[0] = strconv.Itoa(time.Now().Year()) // Set default as current year
+		year = append(year, strconv.Itoa(time.Now().Year())) // Set default as current year
 	}
 
 	if len(theme) == 0 {
-		theme[0] = "light" // Set default as "light"
+		theme = append(theme, "light") // Set default as "light"
 	} else if !(theme[0] == "light" || theme[0] == "dark") {
 		http_err.NewError(c, http.StatusBadRequest, fmt.Errorf("theme must be \"light\" or \"dark\""))
 		return
