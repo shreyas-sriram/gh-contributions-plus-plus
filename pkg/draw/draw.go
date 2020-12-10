@@ -307,8 +307,5 @@ func ConstructMap(request data.Request) (string, error) {
 	// Convert image bytes to Base64
 	imgBase64String := base64.StdEncoding.EncodeToString(buf)
 
-	// Embed into an html without PNG file
-	imgHTML := "<html><body><img src=\"data:image/png;base64," + imgBase64String + "\" /></body></html>"
-
-	return imgHTML, nil
+	return imgBase64String, nil
 }

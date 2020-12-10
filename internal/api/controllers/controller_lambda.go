@@ -55,10 +55,10 @@ func GetContributionsChartLambda(gatewayRequest events.APIGatewayProxyRequest) (
 		request.ContributionList = append(request.ContributionList, contributions)
 	}
 
-	imgHTML, err := draw.ConstructMap(*request)
+	img, err := draw.ConstructMap(*request)
 	if err != nil {
 		return Response{Body: "error creating chart", StatusCode: http.StatusInternalServerError}, nil
 	}
 
-	return Response{Body: imgHTML, Headers: map[string]string{"Content-Type": "text/html"}, StatusCode: http.StatusOK}, nil
+	return Response{Body: img, Headers: map[string]string{"Content-Type": "image/png"}, StatusCode: http.StatusOK, IsBase64Encoded: true}, nil
 }

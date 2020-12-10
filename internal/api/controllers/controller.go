@@ -57,13 +57,13 @@ func GetContributionsChart(c *gin.Context) {
 		request.ContributionList = append(request.ContributionList, contributions)
 	}
 
-	imgHTML, err := draw.ConstructMap(*request)
+	img, err := draw.ConstructMap(*request)
 	if err != nil {
 		http_err.NewError(c, http.StatusInternalServerError, fmt.Errorf("error creating chart"))
 		return
 	}
 
-	request = nil
+	imgHTML := "<html><body><img src=\"data:image/png;base64," + img + "\" /></body></html>"
 
-	c.Data(http.StatusOK, "text/html; charset=utf-8", []byte(imgHTML))
+	c.Data(http.StatusOK, "text/html", []byte(imgHTML))
 }
