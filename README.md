@@ -3,6 +3,8 @@
 
 A Golang application to aggregate the GitHub contributions of multiple accounts.
 
+![gh-contributions](https://npdt6zg2ga.execute-api.ap-south-1.amazonaws.com/dev/aggregate?username=shreyas-sriram&username=shreyas-mesh7&year=2020&theme=light)
+
 ### GitHub Profile README Integration
 
 This application is currently deployed and can be used as follows in your GitHub profile README<br>
