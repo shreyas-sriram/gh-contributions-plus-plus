@@ -2,7 +2,7 @@ FROM golang:1.15.3-alpine AS build_base
 
 ENV CGO_ENABLED=1
 ENV GO111MODULE=on
-RUN apk add --no-cache git  git gcc g++
+RUN apk add --no-cache git gcc g++
 
 # Set the Current Working Directory inside the container
 WORKDIR /src
@@ -29,8 +29,8 @@ COPY --from=build_base /src/data /app/data
 
 RUN chmod +x gh-contributions-aggregator
 
-# This container exposes port 8080 to the outside world
+# This container exposes port 3000 to the outside world
 EXPOSE 3000
 
 # Run the binary program produced by `go install`
-ENTRYPOINT ./gh-contributions-aggregator
+ENTRYPOINT DEPLOY=server ./gh-contributions-aggregator
