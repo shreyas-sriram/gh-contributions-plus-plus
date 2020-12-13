@@ -2,7 +2,7 @@ SRCS := $(shell find . -name '*.go')
 LINTERS := \
 	golang.org/x/lint/golint \
 	honnef.co/go/tools/cmd/staticcheck
-APP_NAME := gh-contributions-aggregator
+APP_NAME := gh-contributions-plus-plus
 
 BANNER:=\
     "\n"\

@@ -15,7 +15,7 @@ import (
 
 	"github.com/golang/freetype"
 	"github.com/golang/freetype/truetype"
-	"github.com/shreyas-sriram/gh-contributions-aggregator/pkg/data"
+	"github.com/shreyas-sriram/gh-contributions-plus-plus/pkg/data"
 )
 
 // Measurements for drawing the contribution chart

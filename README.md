@@ -1,5 +1,5 @@
-[![Actions Status](https://github.com/shreyas-sriram/gh-contributions-aggregator/workflows/CI/badge.svg)](https://github.com/shreyas-sriram/gh-contributions-aggregator/actions)
-# gh-contributions-aggregator
+[![Actions Status](https://github.com/shreyas-sriram/gh-contributions-plus-plus/workflows/CI/badge.svg)](https://github.com/shreyas-sriram/gh-contributions-plus-plus/actions)
+# gh-contributions-plus-plus
 
 A Golang application to aggregate the GitHub contributions of multiple accounts.
 

@@ -1,4 +1,4 @@
-module github.com/shreyas-sriram/gh-contributions-aggregator
+module github.com/shreyas-sriram/gh-contributions-plus-plus
 
 go 1.15
 

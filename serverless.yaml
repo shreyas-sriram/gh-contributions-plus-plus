@@ -1,4 +1,4 @@
-service: gh-contributions-aggregator
+service: gh-contributions-plus-plus
 
 plugins:
   - serverless-offline
@@ -19,7 +19,7 @@ package:
 
 functions:
   aggregate:
-    handler: bin/gh-contributions-aggregator
+    handler: bin/gh-contributions-plus-plus
     events:
     - http:
         path: aggregate

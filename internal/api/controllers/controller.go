@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/shreyas-sriram/gh-contributions-aggregator/pkg/data"
-	"github.com/shreyas-sriram/gh-contributions-aggregator/pkg/draw"
-	http_err "github.com/shreyas-sriram/gh-contributions-aggregator/pkg/http-err"
+	"github.com/shreyas-sriram/gh-contributions-plus-plus/pkg/data"
+	"github.com/shreyas-sriram/gh-contributions-plus-plus/pkg/draw"
+	http_err "github.com/shreyas-sriram/gh-contributions-plus-plus/pkg/http-err"
 )
 
 // GetContributionsChart godoc

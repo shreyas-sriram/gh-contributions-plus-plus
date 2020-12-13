@@ -24,13 +24,13 @@ RUN apk add ca-certificates
 
 WORKDIR /app
 
-COPY --from=build_base /src/out/app /app/gh-contributions-aggregator
+COPY --from=build_base /src/out/app /app/gh-contributions-plus-plus
 COPY --from=build_base /src/data /app/data
 
-RUN chmod +x gh-contributions-aggregator
+RUN chmod +x gh-contributions-plus-plus
 
 # This container exposes port 3000 to the outside world
 EXPOSE 3000
 
 # Run the binary program produced by `go install`
-ENTRYPOINT DEPLOY=server ./gh-contributions-aggregator
+ENTRYPOINT DEPLOY=server ./gh-contributions-plus-plus

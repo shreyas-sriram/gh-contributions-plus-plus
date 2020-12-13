@@ -6,8 +6,8 @@ import (
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
-	"github.com/shreyas-sriram/gh-contributions-aggregator/pkg/data"
-	"github.com/shreyas-sriram/gh-contributions-aggregator/pkg/draw"
+	"github.com/shreyas-sriram/gh-contributions-plus-plus/pkg/data"
+	"github.com/shreyas-sriram/gh-contributions-plus-plus/pkg/draw"
 )
 
 // Response is a wrapper for events.APIGatewayProxyResponse

@@ -5,8 +5,8 @@ import (
 	"io"
 	"os"
 
-	"github.com/shreyas-sriram/gh-contributions-aggregator/internal/api/controllers"
-	"github.com/shreyas-sriram/gh-contributions-aggregator/internal/api/middlewares"
+	"github.com/shreyas-sriram/gh-contributions-plus-plus/internal/api/controllers"
+	"github.com/shreyas-sriram/gh-contributions-plus-plus/internal/api/middlewares"
 
 	"github.com/gin-gonic/gin"
 )

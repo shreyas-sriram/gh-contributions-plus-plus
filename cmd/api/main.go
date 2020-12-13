@@ -4,8 +4,8 @@ import (
 	"os"
 
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/shreyas-sriram/gh-contributions-aggregator/internal/api"
-	"github.com/shreyas-sriram/gh-contributions-aggregator/internal/api/controllers"
+	"github.com/shreyas-sriram/gh-contributions-plus-plus/internal/api"
+	"github.com/shreyas-sriram/gh-contributions-plus-plus/internal/api/controllers"
 )
 
 func main() {

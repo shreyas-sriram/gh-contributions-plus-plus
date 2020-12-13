@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/shreyas-sriram/gh-contributions-aggregator/pkg/data"
+	"github.com/shreyas-sriram/gh-contributions-plus-plus/pkg/data"
 	"github.com/stretchr/testify/assert"
 )
 
