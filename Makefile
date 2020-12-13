@@ -42,6 +42,10 @@ docker.build:
 docker.run:
 	docker run -p 3000:3000 $(APP_NAME)
 
+## docker			: Build and run application as docker
+.PHONY: docker
+docker: docker.build docker.run
+
 ## golint				: Run golint on all *.go files
 .PHONY: golint
 golint: 
