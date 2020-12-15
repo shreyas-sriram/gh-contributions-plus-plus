@@ -33,4 +33,4 @@ RUN chmod +x gh-contributions-plus-plus
 EXPOSE 3000
 
 # Run the binary program produced by `go install`
-ENTRYPOINT DEPLOY=server ./gh-contributions-plus-plus
+ENTRYPOINT ./gh-contributions-plus-plus

@@ -1,4 +1,4 @@
-package controllers
+package handler
 
 import (
 	"net/http"
@@ -13,13 +13,7 @@ import (
 // Response is a wrapper for events.APIGatewayProxyResponse
 type Response events.APIGatewayProxyResponse
 
-// GetContributionsChartLambda godoc
-// @Summary Prepares contributions chart based on given usernames
-// @Description get contributions graph by usernames
-// @Produce png
-// @Param username path array true "GitHub Usernames"
-// @Success 200 {object} tasks.Task
-// @Router /api/contributions [get]
+// GetContributionsChartLambda function is responsible for handling the requests
 func GetContributionsChartLambda(gatewayRequest events.APIGatewayProxyRequest) (Response, error) {
 	usernames := gatewayRequest.MultiValueQueryStringParameters["username"]
 	year := gatewayRequest.QueryStringParameters["year"]

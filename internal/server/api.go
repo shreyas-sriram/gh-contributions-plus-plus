@@ -1,11 +1,11 @@
-package api
+package server
 
 import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/shreyas-sriram/gh-contributions-plus-plus/internal/api/router"
 	"github.com/shreyas-sriram/gh-contributions-plus-plus/internal/pkg/config"
+	"github.com/shreyas-sriram/gh-contributions-plus-plus/internal/server/router"
 )
 
 func setConfiguration(configPath string) {

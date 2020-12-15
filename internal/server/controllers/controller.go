@@ -12,13 +12,7 @@ import (
 	http_err "github.com/shreyas-sriram/gh-contributions-plus-plus/pkg/http-err"
 )
 
-// GetContributionsChart godoc
-// @Summary Prepares contributions chart based on given usernames
-// @Description get contributions graph by usernames
-// @Produce png
-// @Param username path array true "GitHub Usernames"
-// @Success 200 {object} tasks.Task
-// @Router /api/contributions [get]
+// GetContributionsChart function is responsible for handling the requests
 func GetContributionsChart(c *gin.Context) {
 	usernames := c.Request.URL.Query()["username"]
 	year := c.Request.URL.Query()["year"]

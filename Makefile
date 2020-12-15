@@ -15,12 +15,12 @@ BANNER:=\
 ## build.linux			: Build application for Linux runtime
 .PHONY: build.linux
 build.linux:
-	env GOOS=linux go build -ldflags="-s -w" -o bin/$(APP_NAME) cmd/api/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/$(APP_NAME) cmd/server/main.go
 
 ## build.mac			: Build application for Mac runtime
 .PHONY: build.mac
 build.mac:
-	env GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o bin/$(APP_NAME) cmd/api/main.go
+	env GOOS=darwin GOARCH=amd64 go build -ldflags="-s -w" -o bin/$(APP_NAME) cmd/server/main.go
 
 ## clean				: Clean application objects
 .PHONY: clean
@@ -42,7 +42,7 @@ docker.build:
 docker.run:
 	docker run -p 3000:3000 $(APP_NAME)
 
-## docker			: Build and run application as docker
+## docker				: Build and run application as docker
 .PHONY: docker
 docker: docker.build docker.run
 
@@ -76,17 +76,17 @@ lint: golint vet staticcheck
 ## run				: Run application from main.go
 .PHONY: run
 run:
-	go run cmd/api/main.go
+	go run cmd/server/main.go
 
 ## server.start			: Run application as server from runtime binary
 .PHONY: server.start
 server.start:
-	DEPLOY=server ./bin/$(APP_NAME)
+	./bin/$(APP_NAME)
 
 ## sls.build			: Build application for Linux runtime
 .PHONY: sls.build
 sls.build:
-	env GOOS=linux go build -ldflags="-s -w" -o bin/$(APP_NAME) cmd/api/main.go
+	env GOOS=linux go build -ldflags="-s -w" -o bin/$(APP_NAME) cmd/serverless/main.go
 
 ## sls.deploy			: Deploy application as serverless
 .PHONY: sls.deploy
