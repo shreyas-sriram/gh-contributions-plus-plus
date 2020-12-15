@@ -7,5 +7,5 @@ import (
 
 func main() {
 
-	lambda.Start(handler.GetContributionsChartLambda)
+	lambda.Start(handler.GetContributionsChart)
 }

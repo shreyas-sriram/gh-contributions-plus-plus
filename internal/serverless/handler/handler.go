@@ -13,8 +13,8 @@ import (
 // Response is a wrapper for events.APIGatewayProxyResponse
 type Response events.APIGatewayProxyResponse
 
-// GetContributionsChartLambda function is responsible for handling the requests
-func GetContributionsChartLambda(gatewayRequest events.APIGatewayProxyRequest) (Response, error) {
+// GetContributionsChart function is responsible for handling the requests
+func GetContributionsChart(gatewayRequest events.APIGatewayProxyRequest) (Response, error) {
 	usernames := gatewayRequest.MultiValueQueryStringParameters["username"]
 	year := gatewayRequest.QueryStringParameters["year"]
 	theme := gatewayRequest.QueryStringParameters["theme"]
