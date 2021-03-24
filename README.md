@@ -3,7 +3,11 @@
 
 A Golang application to aggregate the GitHub contributions of multiple accounts.
 
-![gh-contributions](https://npdt6zg2ga.execute-api.ap-south-1.amazonaws.com/dev/aggregate?username=shreyas-sriram&username=shreyas-mesh7&year=2020&theme=light)
+![gh-contributions](https://github.com/shreyas-sriram/gh-contributions-plus-plus/blob/gh-pages/docs/images/page.png)
+
+![dark-theme](https://github.com/shreyas-sriram/gh-contributions-plus-plus/blob/gh-pages/docs/images/dark-theme.png)
+
+![light-theme](https://github.com/shreyas-sriram/gh-contributions-plus-plus/blob/gh-pages/docs/images/light-theme.png)
 
 ### GitHub Profile README Integration
 
