@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="resources/style.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+</head>
+<script src="resources/main.js"></script>
+
+<body>
+  <h1>gh-contributions-plus-plus <a href="https://github.com/shreyas-sriram/gh-contributions-plus-plus"><i class="fa fa-github fa_custom"></i></a></h1>
+  <p>
+    Get a single contribution chart for multiple GitHub accounts.
+  </p>
+  <div>
+    <label for="usernames">Enter usernames</label><br>
+    <input type="text" name="usernames" id="usernames" placeholder="foo, bar (comma-separated values)" required><br>
+  </div>
+  <div>
+    <label for="year">Enter a year</label><br>
+    <input type="text" name="year" id="year" placeholder="2020"><br>
+  </div>
+  <div>
+    <label for="theme">Choose a theme</label><br>
+    <select name="theme" id="theme">
+      <option value="light">Light</option>
+      <option value="dark">Dark</option>
+    </select>
+  </div>
+  <div>
+    <button onclick="getGraph()">Get graph</button>
+  </div>
+
+  <pre id="markdown-text" style="display: none;"></pre>
+  <img id="graph" alt="graph" style="display: none;"></img>
+</body>
+
+</html>

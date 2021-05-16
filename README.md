@@ -3,17 +3,17 @@
 
 A Golang application to aggregate the GitHub contributions of multiple accounts.
 
-![gh-contributions](https://github.com/shreyas-sriram/gh-contributions-plus-plus/blob/gh-pages/docs/images/page.png)
+![gh-contributions](https://github.com/shreyas-sriram/gh-contributions-plus-plus/blob/pages/docs/images/page.png)
 
-![dark-theme](https://github.com/shreyas-sriram/gh-contributions-plus-plus/blob/gh-pages/docs/images/dark-theme.png)
+![dark-theme](https://github.com/shreyas-sriram/gh-contributions-plus-plus/blob/pages/docs/images/dark-theme.png)
 
-![light-theme](https://github.com/shreyas-sriram/gh-contributions-plus-plus/blob/gh-pages/docs/images/light-theme.png)
+![light-theme](https://github.com/shreyas-sriram/gh-contributions-plus-plus/blob/pages/docs/images/light-theme.png)
 
 ### GitHub Profile README Integration
 
-This application is currently deployed and can be used as follows in your GitHub profile README<br>
+This application can be deployed and used as follows in your GitHub profile README<br>
 ```
-![gh-contributions](https://npdt6zg2ga.execute-api.ap-south-1.amazonaws.com/dev/aggregate?username={username1}&username={username2}&year=2020&theme=dark)
+![gh-contributions](https://<IP-ADDRESS>/aggregate?username={username1}&username={username2}&year=2020&theme=dark)
 ```
 
 ### Usage
